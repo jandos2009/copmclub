@@ -1,0 +1,125 @@
+.admin-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-nav-group:not(:has(.tab-link:not(.hidden))) {
+  display: none;
+}
+
+.tab-link,
+.ghost {
+  min-height: 42px;
+}
+
+#tab-admin .plan-admin,
+#tab-admin form,
+#tab-admin .plan-info-columns,
+#tab-admin .admin-tournaments,
+#tab-admin .admin-bookings,
+#tab-admin #applicationsBlock {
+  padding: 18px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  border-radius: 14px;
+  background: var(--bg-subtle, #141821);
+}
+
+#tab-admin .plan-admin,
+#tab-admin form,
+#tab-admin #applicationsBlock {
+  margin-bottom: 18px;
+}
+
+#tab-admin .plan-info-columns > .plan-info-group {
+  padding: 14px;
+}
+
+#tab-profile .panel,
+#tab-profile form {
+  padding: 18px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  border-radius: 14px;
+  background: var(--bg-subtle, #141821);
+}
+
+@media (max-width: 980px) {
+  .topbar {
+    flex-wrap: wrap;
+    padding-block: 10px;
+  }
+
+  .topnav {
+    order: 3;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .userbox {
+    margin-left: auto;
+  }
+
+  .admin-nav-group {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 760px) {
+  .topnav {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-nav-group::before {
+    content: attr(data-group);
+    display: block;
+    margin: 4px 0 2px;
+    color: var(--muted, #99a2b3);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .admin-nav-group + .admin-nav-group {
+    margin-top: 6px;
+  }
+
+  .admin-nav-group .tab-link {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  .price-form,
+  .add-seat,
+  .tournament-form,
+  .time-row,
+  .pay-row {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .price-form input,
+  .add-seat input,
+  .add-seat select,
+  .tournament-form input,
+  .tournament-form textarea,
+  .tournament-form button {
+    width: 100%;
+  }
+
+  .booking-row {
+    align-items: flex-start;
+  }
+
+  .booking-row .small {
+    margin-left: 0;
+  }
+
+  .modal-foot button {
+    width: 100%;
+  }
+}

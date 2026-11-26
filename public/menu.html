@@ -4,20 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Компьютерный клуб — Меню</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="extra.css">
   <link rel="stylesheet" href="plan-themes.css">
+  <link rel="stylesheet" href="admin.css">
 </head>
 <body class="club">
   <header class="topbar">
     <div class="brand"><span class="logo">◈</span> NEXUS CLUB</div>
-    <nav class="topnav">
-      <button type="button" id="navSeats" class="tab-link hidden" data-tab="seats">Места</button>
-      <button type="button" id="navMap" class="tab-link active" data-tab="map">Карта клуба</button>
-      <button type="button" id="navList" class="tab-link hidden" data-tab="list">Свободные места</button>
-      <button type="button" class="tab-link" data-tab="club">Клуб</button>
-      <button type="button" id="navAdmin" class="tab-link hidden" data-tab="admin">Оператор</button>
-      <button type="button" class="tab-link" data-tab="profile">Профиль</button>
+    <nav class="topnav" aria-label="Разделы клуба">
+      <div class="admin-nav-group" data-group="Клуб">
+        <button type="button" id="navMap" class="tab-link active" data-tab="map">Карта клуба</button>
+        <button type="button" class="tab-link" data-tab="club">Клуб</button>
+      </div>
+      <div class="admin-nav-group" data-group="Места">
+        <button type="button" id="navSeats" class="tab-link hidden" data-tab="seats">Места</button>
+        <button type="button" id="navList" class="tab-link hidden" data-tab="list">Свободные места</button>
+      </div>
+      <div class="admin-nav-group" data-group="Управление">
+        <button type="button" id="navAdmin" class="tab-link hidden" data-tab="admin">Оператор</button>
+      </div>
+      <div class="admin-nav-group" data-group="Аккаунт">
+        <button type="button" class="tab-link" data-tab="profile">Профиль</button>
+      </div>
     </nav>
     <div class="userbox">
       <span id="userLogin">Загрузка…</span>
