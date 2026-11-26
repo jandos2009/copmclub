@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Привет, мир</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="extra.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -17,28 +18,56 @@
         <span>Я согласен с <a href="/terms.html">пользовательским соглашением</a>
           и <a href="/privacy.html">политикой конфиденциальности</a></span>
        </label>
-      <button type="submit">Зарегестрироваться</button>
+      <button type="submit">Зарегистрироваться</button>
       <p id="message"></p>
       <a href="/login.html">Уже есть аккаунт? Войти</a>
     </form>
   </div>
-  
-  </script>
+
   <script>
+  const params = new URLSearchParams(location.search);
+  const club = params.get('club') || '';
+  const next = params.get('next') || '';
+
+  function redirectAfterAuth() {
+    if (next.startsWith('/') && !next.startsWith('//')) return next;
+    return '/menu.html' + (club ? '?club=' + encodeURIComponent(club) : '');
+  }
+
+  if (club || next) {
+    const query = new URLSearchParams();
+    if (club) query.set('club', club);
+    if (next) query.set('next', next);
+    const loginLink = document.querySelector('a[href="/login.html"]');
+    if (loginLink) loginLink.href = '/login.html?' + query.toString();
+  }
+
   document.getElementById('regForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const frome = e.target;
-    const res = await fetch('/register', {
-       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        login: frome.login.value,
-        password: frome.password.value,
-        agree: frome.agree.checked
-      })
-    });
-    const data = await res.json();
-    document.getElementById('message').textContent = data.message;
+    const form = e.target;
+    const msg = document.getElementById('message');
+
+    try {
+      const res = await fetch('/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          login: form.login.value,
+          password: form.password.value,
+          agree: form.agree.checked
+        })
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        window.location.href = redirectAfterAuth();
+      } else {
+        msg.textContent = data.message;
+      }
+    } catch (err) {
+      console.error(err);
+      msg.textContent = 'Ошибка: ' + err.message;
+    }
   });
 </script>
 </body>

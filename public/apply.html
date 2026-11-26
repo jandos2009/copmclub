@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Подключить клуб — Клубная платформа</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="extra.css">
+  <link rel="stylesheet" href="plan-themes.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="club">
+  <header class="topbar">
+    <div class="brand"><span class="logo">◆</span> КЛУБНАЯ ПЛАТФОРМА</div>
+    <nav class="topnav">
+      <a class="tab-link" href="/clubs.html">Клубы</a>
+      <button type="button" class="tab-link active">Подключить клуб</button>
+      <a class="tab-link" href="/login.html?next=%2Fapply.html">Войти</a>
+    </nav>
+  </header>
+  <div id="unifiedNav" class="unified-nav"></div>
+  <script src="nav.js"></script>
+
+  <main class="container">
+    <div class="page-head">
+      <h1>Подключить свой клуб</h1>
+      <p class="muted">Заполни заявку. После проверки создадим сайт, зал со местами, меню и панель администратора.</p>
+    </div>
+
+    <div id="authNotice" class="club-hero hidden">
+      <h2>Нужно войти в аккаунт</h2>
+      <p>Заявки привязаны к аккаунту, чтобы ты мог видеть их статус и получить права администратора после одобрения.</p>
+      <div class="seat-actions">
+        <a href="/login.html?next=%2Fapply.html"><button type="button">Войти</button></a>
+        <a href="/?next=%2Fapply.html"><button type="button" class="ghost">Зарегистрироваться</button></a>
+      </div>
+    </div>
+
+    <form id="applyForm" class="price-form hidden">
+      <label>Название клуба
+        <input type="text" name="clubName" maxlength="80" placeholder="NEXUS CLUB" required>
+      </label>
+      <label>Адрес сайта (латиницей)
+        <input type="text" name="slug" maxlength="41" placeholder="my-club" pattern="[a-z0-9][a-z0-9-]{1,40}" required>
+      </label>
+      <label>Город
+        <input type="text" name="city" maxlength="80" placeholder="Алматы" required>
+      </label>
+      <label>Адрес клуба
+        <input type="text" name="address" maxlength="160" placeholder="ул. Абая, 15" required>
+      </label>
+      <label>Телефон
+        <input type="tel" name="phone" maxlength="40" placeholder="+7 (___) ___-__-__" required>
+      </label>
+      <label>Email
+        <input type="email" name="email" maxlength="120" placeholder="club@example.kz" required>
+      </label>
+      <label>Тариф
+        <select name="plan">
+          <option value="economy">Economy — сайт и меню</option>
+          <option value="standard">Standard — + онлайн-бронь</option>
+          <option value="lux">Lux — + карта зала и бронь компанией</option>
+        </select>
+        <p id="planHint" class="muted"></p>
+      </label>
+      <label>Свой сайт или соцсети
+        <input type="text" name="siteUrl" maxlength="200" placeholder="https://... (необязательно)">
+      </label>
+      <label>Комментарий
+        <input type="text" name="message" maxlength="500" placeholder="Что важно учесть (необязательно)">
+      </label>
+      <button type="submit">Отправить заявку</button>
+    </form>
+    <p id="applyMessage" class="muted"></p>
+
+    <h2>Мои заявки</h2>
+    <div id="myApplications" class="admin-bookings"></div>
+    <p id="applicationsEmpty" class="empty hidden">Заявок пока нет</p>
+  </main>
+
+  <script>
+    const statuses = {
+      pending: 'На рассмотрении',
+      approved: 'Одобрена',
+      rejected: 'Отклонена'
+    };
+
+    function formatDate(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('ru-RU');
+    }
+
+    function renderApplications(list) {
+      const wrap = document.getElementById('myApplications');
+      wrap.textContent = '';
+      document.getElementById('applicationsEmpty').classList.toggle('hidden', list.length > 0);
+
+      list.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'booking-row';
+
+        const main = document.createElement('div');
+        const title = document.createElement('b');
+        title.textContent = item.clubName + ' — ' + (statuses[item.status] || item.status);
+        const details = document.createElement('p');
+        details.className = 'muted';
+        details.textContent = '/' + item.slug + ' · ' + item.plan + ' · ' + formatDate(item.createdAt);
+        main.append(title, details);
+
+        if (item.reviewNote) {
+          const note = document.createElement('p');
+          note.className = 'muted';
+          note.textContent = 'Комментарий проверяющего: ' + item.reviewNote;
+          main.append(note);
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'seat-actions';
+        if (item.status === 'approved') {
+          const link = document.createElement('a');
+          link.href = '/club.html?club=' + encodeURIComponent(item.slug);
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = 'Открыть сайт';
+          link.append(button);
+          actions.append(link);
+
+          const hint = document.createElement('p');
+          hint.className = 'muted';
+          hint.textContent = 'Выйди и войди заново, чтобы получить права администратора';
+          main.append(hint);
+        }
+
+        row.append(main, actions);
+        wrap.append(row);
+      });
+    }
+
+    async function loadApplications() {
+      const res = await fetch('/api/applications/mine');
+      if (!res.ok) throw new Error('Не удалось загрузить заявки');
+      renderApplications(await res.json());
+    }
+
+    document.getElementById('applyForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const message = document.getElementById('applyMessage');
+      const button = form.querySelector('button[type="submit"]');
+      button.disabled = true;
+      message.textContent = '';
+
+      try {
+        const payload = {};
+        for (const field of form.elements) {
+          if (field.name) payload[field.name] = field.value;
+        }
+        const res = await fetch('/api/applications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || 'Не удалось отправить заявку');
+
+        form.reset();
+        message.textContent = 'Заявка отправлена. Ты увидишь её статус ниже.';
+        await loadApplications();
+      } catch (error) {
+        message.textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    let plans = {};
+
+    function updatePlanHint() {
+      const select = document.querySelector('[name="plan"]');
+      const info = plans[select.value];
+      const hint = document.getElementById('planHint');
+      if (!info) return;
+      hint.textContent = info.tagline + ' ' + info.bookingNote;
+    }
+
+    async function loadPlans() {
+      const res = await fetch('/api/plans');
+      if (!res.ok) return;
+      plans = await res.json();
+      document.querySelectorAll('[name="plan"] option').forEach((option) => {
+        const info = plans[option.value];
+        if (info) option.textContent = info.title + ' — ' + info.tagline;
+      });
+      updatePlanHint();
+    }
+
+    document.querySelector('[name="plan"]').addEventListener('change', updatePlanHint);
+
+    (async function init() {
+      try {
+        await loadPlans();
+        const me = await fetch('/me');
+        if (!me.ok) {
+          document.getElementById('authNotice').classList.remove('hidden');
+          return;
+        }
+        document.getElementById('applyForm').classList.remove('hidden');
+        await loadApplications();
+      } catch (error) {
+        document.getElementById('applyMessage').textContent = error.message;
+      }
+    })();
+  </script>
+</body>
+</html>

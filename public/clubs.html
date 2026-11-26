@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Клубы — Клубная платформа</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="extra.css">
+  <link rel="stylesheet" href="plan-themes.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="club">
+  <header class="topbar">
+    <div class="brand"><span class="logo">◆</span> КЛУБНАЯ ПЛАТФОРМА</div>
+    <nav class="topnav">
+      <button type="button" class="tab-link active">Клубы</button>
+      <a class="tab-link" href="/apply.html">Подключить клуб</a>
+      <a class="tab-link" href="/login.html">Войти</a>
+    </nav>
+  </header>
+  <div id="unifiedNav" class="unified-nav"></div>
+  <script src="nav.js"></script>
+
+  <main class="container">
+    <div class="page-head">
+      <h1>Клубы</h1>
+      <p class="muted">Выбери клуб — откроется его сайт с меню, ценами и бронированием мест.</p>
+    </div>
+
+    <div class="price-form">
+      <label>Поиск
+        <input id="clubSearch" type="search" placeholder="Название или адрес" autocomplete="off">
+      </label>
+      <button type="button" class="tab-link active" data-plan="all">Все</button>
+      <button type="button" class="tab-link" data-plan="economy">Economy</button>
+      <button type="button" class="tab-link" data-plan="standard">Standard</button>
+      <button type="button" class="tab-link" data-plan="lux">Lux</button>
+    </div>
+
+    <div id="clubsList" class="products"></div>
+    <p id="clubsEmpty" class="empty hidden">Клубы не найдены</p>
+
+    <section class="plan-compare">
+      <h2>Чем отличаются тарифы</h2>
+      <div id="planCards" class="plan-cards"></div>
+    </section>
+
+    <div class="club-hero">
+      <h2>Хочешь свой сайт клуба?</h2>
+      <p>Отправь заявку — после проверки мы создадим сайт, зал, места и панель администратора.</p>
+      <a href="/apply.html"><button type="button">Подключить клуб</button></a>
+    </div>
+  </main>
+
+  <script>
+    let clubs = [];
+    let plans = {};
+    let activePlan = 'all';
+
+    function planTitle(plan) {
+      return (plans[plan] && plans[plan].title) || plan;
+    }
+
+    function renderPlans() {
+      const wrap = document.getElementById('planCards');
+      wrap.textContent = '';
+      Object.keys(plans).forEach((key) => {
+        const plan = plans[key];
+        const card = document.createElement('article');
+        card.className = 'plan-card';
+        card.style.setProperty('--plan-accent', plan.colors.accent);
+        card.style.setProperty('--plan-surface', plan.colors.surface);
+        card.style.setProperty('--plan-ink', plan.colors.ink);
+
+        const head = document.createElement('h3');
+        head.textContent = plan.title + ' · ' + plan.tier;
+        const tagline = document.createElement('p');
+        tagline.className = 'plan-tagline';
+        tagline.textContent = plan.tagline;
+        card.append(head, tagline);
+
+        const pluses = document.createElement('ul');
+        pluses.className = 'plan-features';
+        plan.advantages.forEach((item) => {
+          const li = document.createElement('li');
+          li.textContent = '+ ' + item;
+          pluses.append(li);
+        });
+        card.append(pluses);
+
+        if (plan.restrictions.length) {
+          const minus = document.createElement('p');
+          minus.className = 'plan-limit';
+          minus.textContent = plan.restrictions.join(' · ');
+          card.append(minus);
+        }
+
+        const req = document.createElement('p');
+        req.className = 'muted';
+        req.textContent = 'Нужно: ' + plan.requirements.join(', ');
+        const settings = document.createElement('p');
+        settings.className = 'plan-settings';
+        settings.textContent = 'Настройки: ' + plan.settings.join(', ');
+        card.append(req, settings);
+        wrap.append(card);
+      });
+    }
+
+    function render() {
+      const query = document.getElementById('clubSearch').value.trim().toLowerCase();
+      const list = clubs.filter((club) => {
+        const matchesPlan = activePlan === 'all' || club.plan === activePlan;
+        const text = (club.name + ' ' + (club.address || '')).toLowerCase();
+        return matchesPlan && text.includes(query);
+      });
+
+      const wrap = document.getElementById('clubsList');
+      wrap.textContent = '';
+      document.getElementById('clubsEmpty').classList.toggle('hidden', list.length > 0);
+
+      list.forEach((club) => {
+        const info = club.planInfo || plans[club.plan];
+        const card = document.createElement('article');
+        card.className = 'product';
+        if (info) {
+          card.style.setProperty('--plan-accent', info.colors.accent);
+          card.style.setProperty('--plan-surface', info.colors.surface);
+          card.style.setProperty('--plan-ink', info.colors.ink);
+        }
+
+        const top = document.createElement('div');
+        top.className = 'product-top';
+        const title = document.createElement('h3');
+        title.textContent = club.name;
+        const badge = document.createElement('span');
+        badge.className = 'product-tag';
+        badge.textContent = planTitle(club.plan);
+        top.append(title, badge);
+
+        const address = document.createElement('p');
+        address.className = 'muted';
+        address.textContent = club.address || 'Адрес уточняется';
+
+        const hours = document.createElement('p');
+        hours.className = 'count';
+        hours.textContent = club.hours || 'Режим работы уточняется';
+
+        const phone = document.createElement('p');
+        phone.className = 'muted';
+        phone.textContent = club.phone || '';
+
+        if (info) {
+          const tagline = document.createElement('p');
+          tagline.className = 'plan-tagline';
+          tagline.textContent = info.tagline;
+          const chips = document.createElement('div');
+          chips.className = 'plan-features inline';
+          info.advantages.forEach((item) => {
+            const chip = document.createElement('span');
+            chip.className = 'plan-feature';
+            chip.textContent = item;
+            chips.append(chip);
+          });
+          card.append(tagline, chips);
+        }
+
+        const actions = document.createElement('div');
+        actions.className = 'seat-actions';
+        const site = document.createElement('a');
+        site.href = '/club.html?club=' + encodeURIComponent(club.slug);
+        const siteButton = document.createElement('button');
+        siteButton.type = 'button';
+        siteButton.textContent = 'Сайт клуба';
+        site.append(siteButton);
+
+        const menu = document.createElement('a');
+        menu.href = '/menu.html?club=' + encodeURIComponent(club.slug);
+        const menuButton = document.createElement('button');
+        menuButton.type = 'button';
+        menuButton.className = 'ghost';
+        menuButton.textContent = 'Меню и бронь';
+        menu.append(menuButton);
+
+        actions.append(site, menu);
+        card.append(top, address, hours, phone, actions);
+        wrap.append(card);
+      });
+    }
+
+    document.getElementById('clubSearch').addEventListener('input', render);
+    document.querySelectorAll('[data-plan]').forEach((button) => {
+      button.addEventListener('click', () => {
+        activePlan = button.dataset.plan;
+        document.querySelectorAll('[data-plan]').forEach((item) => {
+          item.classList.toggle('active', item === button);
+        });
+        render();
+      });
+    });
+
+    (async function init() {
+      try {
+        const [clubsRes, plansRes] = await Promise.all([fetch('/api/clubs'), fetch('/api/plans')]);
+        if (!clubsRes.ok) throw new Error('Не удалось загрузить клубы');
+        clubs = await clubsRes.json();
+        plans = await plansRes.json();
+        renderPlans();
+        document.querySelectorAll('[data-plan]').forEach((button) => {
+          const info = plans[button.dataset.plan];
+          if (info) button.title = info.tagline;
+        });
+        render();
+      } catch (error) {
+        const empty = document.getElementById('clubsEmpty');
+        empty.textContent = error.message;
+        empty.classList.remove('hidden');
+      }
+    })();
+  </script>
+</body>
+</html>

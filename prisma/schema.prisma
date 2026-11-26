@@ -1,22 +1,183 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
+
+model Club {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  name        String
+  plan        String   @default("economy")
+  address     String   @default("")
+  phone       String   @default("")
+  email       String   @default("")
+  hours       String   @default("")
+  description String   @default("")
+  createdAt   DateTime @default(now())
+
+  halls       Hall[]
+  seats       Seat[]
+  menu        MenuItem[]
+  prices      PriceHistory[]
+  bookings    Booking[]
+  tournaments Tournament[]
+  users       User[]
+  applications ClubApplication[]
+}
+
+model Hall {
+  id     Int    @id @default(autoincrement())
+  clubId Int
+  name   String
+  width  Int    @default(16)
+  height Int    @default(10)
+
+  club  Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  seats Seat[]
+
+  @@unique([clubId, name])
+}
+
 model Seat {
   id     Int    @id @default(autoincrement())
+  clubId Int
+  hallId Int
   name   String
-  status String
+  zone   String @default("standard")
+  status String @default("free")
+  x      Int    @default(0)
+  y      Int    @default(0)
+
+  club         Club          @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  hall         Hall          @relation(fields: [hallId], references: [id], onDelete: Cascade)
+  bookingSeats BookingSeat[]
+
+  @@unique([clubId, name])
+  @@index([clubId, hallId])
 }
-model User{
-  id Int @id @default(autoincrement())
-  login String @unique
+
+model User {
+  id       Int      @id @default(autoincrement())
+  login    String   @unique
   password String
+  role     String   @default("user")
+  clubId   Int?
   agreedAt DateTime @default(now())
+
+  club     Club?     @relation(fields: [clubId], references: [id], onDelete: SetNull)
+  bookings Booking[]
+  applications ClubApplication[]
+
+  @@index([clubId])
+}
+
+model Booking {
+  id        Int      @id @default(autoincrement())
+  clubId    Int
+  userId    Int
+  groupId   String
+  start     DateTime
+  end       DateTime
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+
+  club  Club          @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seats BookingSeat[]
+
+  @@index([clubId, start])
+  @@index([userId, start])
+  @@index([groupId])
+}
+
+model BookingSeat {
+  id        Int      @id @default(autoincrement())
+  bookingId Int
+  seatId    Int
+  start     DateTime
+  end       DateTime
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  seat    Seat    @relation(fields: [seatId], references: [id], onDelete: Cascade)
+
+  @@unique([seatId, bookingId])
+  @@index([seatId])
+}
+
+model PriceHistory {
+  id        Int      @id @default(autoincrement())
+  clubId    Int
+  zone      String
+  price     Int
+  validFrom DateTime @default(now())
+
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@index([clubId, zone, validFrom])
+}
+
+model MenuItem {
+  id        Int     @id @default(autoincrement())
+  clubId    Int
+  category  String  @default("Напитки")
+  name      String
+  price     Int
+  available Boolean @default(true)
+
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@index([clubId, category])
+}
+
+model Tournament {
+  id          Int      @id @default(autoincrement())
+  clubId      Int
+  title       String
+  game        String
+  description String   @default("")
+  start       DateTime
+  entryFee    Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  @@index([clubId, start])
+}
+
+model Session {
+  id        String   @id
+  data      String
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+model ClubApplication {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  clubName   String
+  slug       String
+  city       String
+  address    String
+  phone      String
+  email      String
+  plan       String
+  siteUrl    String    @default("")
+  message    String    @default("")
+  status     String    @default("pending")
+  reviewNote String    @default("")
+  clubId     Int?
+  createdAt  DateTime  @default(now())
+  reviewedAt DateTime?
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club Club? @relation(fields: [clubId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([status])
 }

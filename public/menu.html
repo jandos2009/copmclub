@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Компьютерный клуб — Меню</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="extra.css">
+  <link rel="stylesheet" href="plan-themes.css">
+</head>
+<body class="club">
+  <header class="topbar">
+    <div class="brand"><span class="logo">◈</span> NEXUS CLUB</div>
+    <nav class="topnav">
+      <button type="button" id="navSeats" class="tab-link hidden" data-tab="seats">Места</button>
+      <button type="button" id="navMap" class="tab-link active" data-tab="map">Карта клуба</button>
+      <button type="button" id="navList" class="tab-link hidden" data-tab="list">Свободные места</button>
+      <button type="button" class="tab-link" data-tab="club">Клуб</button>
+      <button type="button" id="navAdmin" class="tab-link hidden" data-tab="admin">Оператор</button>
+      <button type="button" class="tab-link" data-tab="profile">Профиль</button>
+    </nav>
+    <div class="userbox">
+      <span id="userLogin">Загрузка…</span>
+      <button type="button" id="logoutBtn" class="ghost">Выйти</button>
+    </div>
+  </header>
+  <div id="unifiedNav" class="unified-nav"></div>
+  <script src="nav.js"></script>
+
+  <main class="container">
+    <section id="tab-seats" class="tab">
+      <div class="page-head">
+        <div>
+          <h1>Управление местами</h1>
+          <p class="muted">Добавляй места, ставь на обслуживание и убирай лишние.</p>
+        </div>
+        <form id="addSeatForm" class="add-seat">
+          <input type="text" name="name" placeholder="Название (PC-13)" maxlength="40" required>
+          <select name="zone">
+            <option value="standard">Стандарт</option>
+            <option value="comfort">Комфорт</option>
+            <option value="vip">VIP</option>
+          </select>
+          <select name="status">
+            <option value="free">Свободно</option>
+            <option value="maintenance">Обслуживание</option>
+          </select>
+          <button type="submit">Добавить</button>
+        </form>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span id="statTotal">0</span><small>всего</small></div>
+        <div class="stat free"><span id="statFree">0</span><small>свободно</small></div>
+        <div class="stat occupied"><span id="statOccupied">0</span><small>занято сейчас</small></div>
+        <div class="stat maintenance"><span id="statMaintenance">0</span><small>обслуживание</small></div>
+      </div>
+
+      <div id="seatsGrid" class="seat-grid"></div>
+      <p id="seatsEmpty" class="empty hidden">Пока нет ни одного места. Добавь первое ↑</p>
+    </section>
+
+    <section id="tab-map" class="tab active">
+      <h1>Карта клуба</h1>
+      <p class="muted">Нажми на место — откроется окно с расписанием и бронированием.</p>
+
+      <div class="products">
+        <article class="product">
+          <div class="product-top">
+            <h3>Стандарт</h3>
+            <span class="product-tag">15 мест</span>
+          </div>
+          <p class="price" data-zone-price="standard">150 ₽/час</p>
+          <p class="muted">Обычный ПК, интернет 100 Мбит/с, наушники.</p>
+          <p class="count" data-zone-count="standard">…</p>
+        </article>
+        <article class="product hot">
+          <div class="product-top">
+            <h3>Комфорт</h3>
+            <span class="product-tag">10 мест</span>
+          </div>
+          <p class="price" data-zone-price="comfort">250 ₽/час</p>
+          <p class="muted">Игровой ПК, монитор 144 Гц, механика.</p>
+          <p class="count" data-zone-count="comfort">…</p>
+        </article>
+        <article class="product">
+          <div class="product-top">
+            <h3>VIP</h3>
+            <span class="product-tag">9 мест</span>
+          </div>
+          <p class="price" data-zone-price="vip">400 ₽/час</p>
+          <p class="muted">Мощный ПК, монитор 240 Гц, отдельная комната.</p>
+          <p class="count" data-zone-count="vip">…</p>
+        </article>
+      </div>
+
+      <div class="building">
+        <div class="building-head">
+          <span class="entrance">Вход</span>
+          <span class="reception">Ресепшен / бар</span>
+        </div>
+
+        <div class="building-rooms">
+          <div class="room room-standard">
+            <div class="room-head"><span>Стандарт</span><small>15 мест</small></div>
+            <div class="seat-map" data-zone="standard"></div>
+          </div>
+          <div class="room room-comfort">
+            <div class="room-head"><span>Комфорт</span><small>10 мест</small></div>
+            <div class="seat-map" data-zone="comfort"></div>
+          </div>
+          <div class="room room-vip">
+            <div class="room-head"><span>VIP</span><small>9 мест</small></div>
+            <div class="seat-map" data-zone="vip"></div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <span><i class="dot free"></i>Свободно</span>
+          <span><i class="dot occupied"></i>Занято сейчас</span>
+          <span><i class="dot mine"></i>Ваша бронь</span>
+          <span><i class="dot maintenance"></i>Обслуживание</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-list" class="tab">
+      <h1>Свободные места</h1>
+      <p class="muted" id="seatListNote">Выбери место из списка — откроется расписание и бронирование.</p>
+      <div id="seatList" class="seat-list"></div>
+    </section>
+
+    <section id="tab-club" class="tab">
+      <h1>О клубе</h1>
+      <p class="muted">Правила, услуги и турниры NEXUS CLUB.</p>
+
+      <div class="club-hero">
+        <h2>NEXUS CLUB — больше, чем компьютерный клуб</h2>
+        <p>Игровые ПК, PS5, VR, кухня и турниры. Приходи один или с командой — место найдётся.</p>
+      </div>
+
+      <h2>Правила клуба</h2>
+      <ol class="rules">
+        <li>Приходи за 10–15 минут до начала брони — так мы успеем всё подготовить.</li>
+        <li>Занимай только своё место и не трогай чужие вещи.</li>
+        <li>Уважай гостей и персонал: без оскорблений, угроз и агрессии.</li>
+        <li>Ешь и пей только в зоне кухни — за компьютером еда и напитки запрещены.</li>
+        <li>Не меняй настройки ПК, консолей и оборудования без разрешения оператора.</li>
+        <li>Не выключай и не перезагружай технику без необходимости.</li>
+        <li>Читы, сторонние программы и взлом запрещены — это блокировка без возврата оплаты.</li>
+        <li>Не шуми и не мешай другим: играй в наушниках, говори спокойно.</li>
+        <li>Бережно относись к технике. За умышленную порчу — ответственность по правилам клуба.</li>
+        <li>Бронь можно отменить в меню или у оператора. Не пришёл — место освобождается.</li>
+        <li>Дети до 14 лет — только в сопровождении взрослого.</li>
+        <li>Оператор может отказать в обслуживании за нарушение правил.</li>
+      </ol>
+
+      <h2>Что есть в клубе</h2>
+      <div class="info-grid">
+        <article class="info-card">
+          <h3>Игровые ПК</h3>
+          <p>15 стандартных, 10 комфорт и 9 VIP-мест. Мониторы до 240 Гц, игровая периферия и наушники.</p>
+        </article>
+        <article class="info-card">
+          <h3>PlayStation 5</h3>
+          <p>Консоли PS5 с геймпадами, популярные игры и удобные диваны для игры вдвоём или компанией.</p>
+        </article>
+        <article class="info-card">
+          <h3>VR-зона</h3>
+          <p>VR-шлем и набор игр: можно попробовать что-то новое между матчами.</p>
+        </article>
+        <article class="info-card">
+          <h3>Кухня и бар</h3>
+          <p>Пицца, бургеры, снеки, чай, кофе и холодные напитки. Есть зона, где можно спокойно поесть.</p>
+        </article>
+        <article class="info-card">
+          <h3>Зона отдыха</h3>
+          <p>Диваны, настольные игры и место, чтобы подождать друзей или передохнуть.</p>
+        </article>
+        <article class="info-card">
+          <h3>Турниры и ивенты</h3>
+          <p>CS2, Dota 2, Valorant и FC 25. Турниры организуют сами организаторы клуба.</p>
+        </article>
+      </div>
+
+      <h2>Ближайшие турниры</h2>
+      <p class="muted">Турниры проводят организаторы клуба. Список обновляется в панели оператора.</p>
+      <div id="tournaments" class="tournament-grid"></div>
+      <p id="tournamentsEmpty" class="empty hidden">Пока турниров нет — скоро анонсируем.</p>
+    </section>
+
+    <section id="tab-admin" class="tab">
+      <h1>Панель оператора</h1>
+      <p class="muted">Доступно только администраторам.</p>
+      <div class="admin-toolbar">
+        <button id="toggleMapEditor" class="small" style="margin-bottom: 8px;">Включить редактор карты</button>
+        <span id="mapHint" class="muted hidden">Перетащите места на схеме, чтобы изменить расстановку. Изменения сохраняются автоматически.</span>
+      </div>
+
+      <div class="plan-admin">
+        <h2>Тариф, настройки и требования</h2>
+        <div id="planAdminInfo" class="plan-info-columns"></div>
+        <div id="planAdminControls" class="hidden">
+          <label>Тариф клуба
+            <select id="adminPlanSelect">
+              <option value="economy">Economy</option>
+              <option value="standard">Standard</option>
+              <option value="lux">Lux</option>
+            </select>
+          </label>
+          <button type="button" id="savePlanBtn">Сохранить тариф</button>
+          <p id="planAdminMessage" class="muted"></p>
+        </div>
+      </div>
+
+      <h2>Цены по зонам</h2>
+      <form id="priceForm" class="price-form">
+        <label>Стандарт, ₽/час
+          <input type="number" name="standard" min="0" step="10" required>
+        </label>
+        <label>Комфорт, ₽/час
+          <input type="number" name="comfort" min="0" step="10" required>
+        </label>
+        <label>VIP, ₽/час
+          <input type="number" name="vip" min="0" step="10" required>
+        </label>
+        <button type="submit">Сохранить цены</button>
+      </form>
+
+      <h2>Турниры</h2>
+      <form id="tournamentForm" class="tournament-form">
+        <input type="text" name="title" placeholder="Название турнира" maxlength="80" required>
+        <input type="text" name="game" placeholder="Игра (CS2, Dota 2)" maxlength="40" required>
+        <input type="datetime-local" name="start" required>
+        <input type="number" name="entryFee" min="0" step="50" placeholder="Взнос, ₽" required>
+        <textarea name="description" rows="2" maxlength="300" placeholder="Описание (формат, правила)"></textarea>
+        <button type="submit">Добавить турнир</button>
+      </form>
+      <div id="adminTournaments" class="admin-tournaments"></div>
+      <p id="adminTournamentsEmpty" class="empty hidden">Турниров пока нет</p>
+
+      <h2>Активные и будущие брони</h2>
+      <div id="adminBookings" class="admin-bookings"></div>
+      <p id="adminBookingsEmpty" class="empty hidden">Броней пока нет</p>
+
+      <div id="applicationsBlock" class="hidden">
+        <h2>Заявки на подключение клубов</h2>
+        <p class="muted">Одобрение создаёт сайт клуба и назначает заявителя администратором.</p>
+        <div id="adminApplications" class="admin-bookings"></div>
+        <p id="applicationsEmpty" class="empty hidden">Новых заявок нет</p>
+      </div>
+    </section>
+
+    <section id="tab-profile" class="tab">
+      <h1>Профиль</h1>
+      <div class="profile-card">
+        <div class="avatar" id="avatar">?</div>
+        <div>
+          <p>Логин: <b id="profileLogin">…</b></p>
+          <p class="muted" id="profileRole">Покупатель</p>
+        </div>
+      </div>
+
+      <h2>Мои брони</h2>
+      <div id="myBookings" class="my-bookings"></div>
+      <p id="myBookingsEmpty" class="empty hidden">У вас пока нет броней</p>
+
+      <button type="button" id="logoutBtn2" class="danger">Выйти из аккаунта</button>
+    </section>
+  </main>
+
+  <div id="seatModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalSeatName">
+    <div class="modal-card">
+      <button type="button" class="modal-close" id="modalClose" aria-label="Закрыть">×</button>
+
+      <div class="modal-head">
+        <div>
+          <h2 id="modalSeatName">Место</h2>
+          <p class="muted" id="modalSeatMeta">Зона · цена</p>
+        </div>
+        <span id="modalSeatStatus" class="badge free">Свободно</span>
+      </div>
+
+      <div class="modal-section">
+        <div class="section-title">
+          <h3>Занятость на дату</h3>
+          <input type="date" id="modalDate">
+        </div>
+        <div class="timeline">
+          <div class="timeline-track" id="timelineTrack"></div>
+          <div class="timeline-legend muted">
+            <span>00:00</span><span>12:00</span><span>24:00</span>
+          </div>
+        </div>
+        <div id="intervalList" class="interval-list"></div>
+      </div>
+
+      <form id="bookingForm" class="modal-section">
+        <h3>Бронирование</h3>
+        <div class="time-row">
+          <label>Начало
+            <input type="time" id="startTime" required>
+          </label>
+          <label>Конец
+            <input type="time" id="endTime" required>
+          </label>
+        </div>
+        <p class="muted" id="timeHint"></p>
+
+        <div class="pay-fields">
+          <h3>Оплата картой (демо)</h3>
+          <input type="text" id="cardNumber" inputmode="numeric" placeholder="Номер карты" maxlength="19" autocomplete="off" required>
+          <div class="pay-row">
+            <input type="text" id="cardExpiry" placeholder="ММ/ГГ" maxlength="5" autocomplete="off" required>
+            <input type="text" id="cardCvv" inputmode="numeric" placeholder="CVV" maxlength="3" autocomplete="off" required>
+          </div>
+          <input type="text" id="cardName" placeholder="Имя на карте" autocomplete="off" required>
+        </div>
+
+        <p class="demo-note">Демо-оплата: данные карты никуда не отправляются и не сохраняются.</p>
+        <p class="maintenance-note hidden" id="maintenanceNote">Это место на обслуживании — бронирование недоступно.</p>
+
+        <div class="modal-foot">
+          <div><span class="muted">Итого:</span> <b id="totalPrice">0 ₽</b></div>
+          <button type="submit" id="payBtn">Оплатить и забронировать</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const clubSlug = new URLSearchParams(location.search).get('club') || '';
+    if (clubSlug) {
+      const originalFetch = window.fetch.bind(window);
+      window.fetch = (input, init) => {
+        if (typeof input === 'string' && input.startsWith('/') && !input.startsWith('//')) {
+          const separator = input.includes('?') ? '&' : '?';
+          input = input + separator + 'club=' + encodeURIComponent(clubSlug);
+        }
+        return originalFetch(input, init);
+      };
+    }
+
+    const statusLabels = {
+      free: 'Свободно',
+      occupied: 'Занято',
+      maintenance: 'Обслуживание'
+    };
+
+    const zoneLabels = {
+      standard: 'Стандарт',
+      comfort: 'Комфорт',
+      vip: 'VIP'
+    };
+
+    const prices = { standard: 150, comfort: 250, vip: 400 };
+    const grid = document.getElementById('seatsGrid');
+    const modal = document.getElementById('seatModal');
+    const bookingForm = document.getElementById('bookingForm');
+    const modalDate = document.getElementById('modalDate');
+    const startTime = document.getElementById('startTime');
+    const endTime = document.getElementById('endTime');
+    const totalPrice = document.getElementById('totalPrice');
+    const timeHint = document.getElementById('timeHint');
+    const payBtn = document.getElementById('payBtn');
+    const maintenanceNote = document.getElementById('maintenanceNote');
+    const intervalList = document.getElementById('intervalList');
+
+    let seats = [];
+    let tournaments = [];
+    let clubFeatures = null;
+    let me = null;
+    let isAdmin = false;
+    let isSuperadmin = false;
+    let activeSeat = null;
+    let mapEditorActive = false;
+    let draggedSeatId = null;
+    let dragContainer = null;
+    let dragPointerId = null;
+
+    let toastTimer;
+    function toast(text, ok = true) {
+      const el = document.getElementById('toast');
+      el.textContent = text;
+      el.className = 'toast show ' + (ok ? 'ok' : 'err');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { el.className = 'toast'; }, 3000);
+    }
+
+    function money(value) {
+      return Number(value || 0).toLocaleString('ru-RU');
+    }
+
+    function pad(value) {
+      return String(value).padStart(2, '0');
+    }
+
+    function toDateInput(date) {
+      return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+    }
+
+    function toDateTimeLocal(date) {
+      return toDateInput(date) + 'T' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+    }
+
+    function timeToMinutes(value) {
+      const parts = value.split(':').map(Number);
+      return parts[0] * 60 + parts[1];
+    }
+
+    function formatRange(startIso, endIso) {
+      const start = new Date(startIso);
+      const end = new Date(endIso);
+      const sameDay = start.toDateString() === end.toDateString();
+      const dateOpts = { day: '2-digit', month: 'short' };
+      const timeOpts = { hour: '2-digit', minute: '2-digit' };
+      const startPart = start.toLocaleDateString('ru-RU', dateOpts) + ', ' + start.toLocaleTimeString('ru-RU', timeOpts);
+      const endPart = (sameDay ? '' : end.toLocaleDateString('ru-RU', dateOpts) + ', ') + end.toLocaleTimeString('ru-RU', timeOpts);
+      return startPart + ' — ' + endPart;
+    }
+
+    function setUser(user) {
+      me = user;
+      isAdmin = ['admin', 'owner', 'superadmin'].includes(user.role);
+      isSuperadmin = user.role === 'superadmin';
+      document.getElementById('userLogin').textContent = user.login;
+      document.getElementById('profileLogin').textContent = user.login;
+      document.getElementById('profileRole').textContent = isAdmin ? 'Администратор' : 'Покупатель';
+      document.getElementById('avatar').textContent = user.login.trim().charAt(0).toUpperCase();
+      document.getElementById('navSeats').classList.toggle('hidden', !isAdmin);
+      document.getElementById('navAdmin').classList.toggle('hidden', !isAdmin);
+      document.querySelector('.admin-toolbar').classList.toggle('hidden', !isAdmin);
+    }
+
+    function actionButton(text, action, id, cls) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = text;
+      btn.className = 'small ' + (cls || '');
+      btn.dataset.action = action;
+      btn.dataset.id = id;
+      return btn;
+    }
+
+    function renderSeats() {
+      grid.textContent = '';
+
+      const counts = { free: 0, occupied: 0, maintenance: 0 };
+      seats.forEach((seat) => {
+        if (counts[seat.status] !== undefined) counts[seat.status]++;
+      });
+
+      document.getElementById('statTotal').textContent = seats.length;
+      document.getElementById('statFree').textContent = counts.free;
+      document.getElementById('statOccupied').textContent = counts.occupied;
+      document.getElementById('statMaintenance').textContent = counts.maintenance;
+      document.getElementById('seatsEmpty').classList.toggle('hidden', seats.length > 0);
+
+      seats.forEach((seat) => {
+        const card = document.createElement('article');
+        card.className = 'seat-card ' + seat.status;
+
+        const top = document.createElement('div');
+        top.className = 'seat-top';
+
+        const info = document.createElement('div');
+        const name = document.createElement('h3');
+        name.textContent = seat.name;
+        const zone = document.createElement('p');
+        zone.className = 'seat-zone';
+        zone.textContent = zoneLabels[seat.zone] || seat.zone;
+        info.append(name, zone);
+
+        const badge = document.createElement('span');
+        badge.className = 'badge ' + seat.status;
+        badge.textContent = statusLabels[seat.status] || seat.status;
+
+        top.append(info, badge);
+
+        const actions = document.createElement('div');
+        actions.className = 'seat-actions';
+
+        if (seat.status === 'maintenance') {
+          actions.append(actionButton('Вернуть в строй', 'free', seat.id, 'primary'));
+        } else {
+          actions.append(actionButton('Обслуживание', 'maintenance', seat.id, 'ghost'));
+        }
+        actions.append(actionButton('Удалить', 'delete', seat.id, 'danger'));
+
+        card.append(top, actions);
+        grid.append(card);
+      });
+    }
+
+    function renderSeatList() {
+      const wrap = document.getElementById('seatList');
+      wrap.textContent = '';
+      const groups = { standard: [], comfort: [], vip: [] };
+      seats.forEach((seat) => {
+        const list = groups[seat.zone] || groups.standard;
+        list.push(seat);
+      });
+      Object.entries(groups).forEach(([zone, list]) => {
+        if (!list.length) return;
+        list.sort((a, b) => a.name.localeCompare(b.name, 'ru', { numeric: true }));
+        const block = document.createElement('div');
+        block.className = 'seat-list-group';
+        const heading = document.createElement('h3');
+        heading.textContent = zoneLabels[zone] || zone;
+        const row = document.createElement('div');
+        row.className = 'seat-list-row';
+        list.forEach((seat) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'seat-list-item ' + seat.status;
+          button.textContent = seat.name + ' · ' + (statusLabels[seat.status] || seat.status);
+          button.disabled = seat.status !== 'free';
+          button.addEventListener('click', () => openSeatModal(seat));
+          row.append(button);
+        });
+        block.append(heading, row);
+        wrap.append(block);
+      });
+    }
+
+    function renderMap() {
+      const byZone = { standard: [], comfort: [], vip: [] };
+      seats.forEach((seat) => {
+        const list = byZone[seat.zone] || byZone.standard;
+        list.push(seat);
+      });
+
+      Object.values(byZone).forEach((list) => {
+        list.sort((a, b) => a.name.localeCompare(b.name, 'ru', { numeric: true }));
+      });
+
+      if (mapEditorActive) {
+        document.querySelectorAll('.seat-map').forEach((container) => {
+          const zone = container.dataset.zone;
+          const list = byZone[zone] || [];
+          const maxX = Math.max(0, ...list.map((seat) => seat.x));
+          const maxY = Math.max(0, ...list.map((seat) => seat.y));
+          const gridWidth = Math.max(maxX + 2, 5);
+          const gridHeight = Math.max(maxY + 2, 4);
+
+          container.style.gridTemplateColumns = 'repeat(' + gridWidth + ', 1fr)';
+          container.style.gridTemplateRows = 'repeat(' + gridHeight + ', 38px)';
+          container.dataset.gridWidth = String(gridWidth);
+          container.dataset.gridHeight = String(gridHeight);
+          container.textContent = '';
+
+          for (let i = 0; i < gridWidth * gridHeight; i += 1) {
+            const cell = document.createElement('div');
+            cell.className = 'map-cell';
+            container.append(cell);
+          }
+
+          list.forEach((seat) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'map-seat editor';
+            btn.dataset.id = String(seat.id);
+            btn.style.gridColumn = String(seat.x + 1);
+            btn.style.gridRow = String(seat.y + 1);
+            btn.textContent = seat.name.includes('-') ? seat.name.split('-')[1] : seat.name;
+            btn.title = seat.name + ' — перетащите, чтобы переместить';
+            btn.addEventListener('pointerdown', (event) => {
+              if (!mapEditorActive || event.button !== 0) return;
+              event.preventDefault();
+              draggedSeatId = seat.id;
+              dragContainer = btn.closest('.seat-map');
+              dragPointerId = event.pointerId;
+              btn.setPointerCapture(event.pointerId);
+              btn.classList.add('dragging');
+            });
+            container.append(btn);
+          });
+        });
+      } else {
+        document.querySelectorAll('.seat-map').forEach((container) => {
+          const zone = container.dataset.zone;
+          const list = byZone[zone] || [];
+          container.textContent = '';
+
+          list.forEach((seat) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            const mine = seat.bookedById != null && seat.bookedById === me.userId;
+            btn.className = 'map-seat ' + seat.status + (mine ? ' mine' : '');
+            btn.dataset.id = seat.id;
+            btn.textContent = seat.name.includes('-') ? seat.name.split('-')[1] : seat.name;
+            btn.title = seat.name + ' — ' + (statusLabels[seat.status] || seat.status) + (mine ? ' (ваша бронь)' : '');
+            container.append(btn);
+          });
+
+          if (list.length === 0) {
+            const empty = document.createElement('p');
+            empty.className = 'empty';
+            empty.textContent = 'Нет мест';
+            container.append(empty);
+          }
+        });
+
+        document.querySelectorAll('[data-zone-count]').forEach((el) => {
+          const list = byZone[el.dataset.zoneCount] || [];
+          const free = list.filter((seat) => seat.status === 'free').length;
+          el.textContent = 'Свободно ' + free + ' из ' + list.length;
+        });
+      }
+    }
+
+    async function loadSeats() {
+      const res = await fetch('/seats');
+      if (!res.ok) {
+        toast('Не удалось загрузить места', false);
+        return;
+      }
+      seats = await res.json();
+      if (activeSeat) {
+        const fresh = seats.find((seat) => seat.id === activeSeat.id);
+        if (fresh) activeSeat = fresh;
+      }
+      renderSeats();
+      renderSeatList();
+      renderMap();
+      if (activeSeat) updateModalHeader();
+    }
+
+    async function loadPrices() {
+      try {
+        const res = await fetch('/prices');
+        if (!res.ok) return;
+        const list = await res.json();
+        list.forEach((item) => {
+          if (prices[item.zone] !== undefined) prices[item.zone] = item.price;
+        });
+      } catch (err) {
+        console.error(err);
+      }
+
+      document.querySelectorAll('[data-zone-price]').forEach((el) => {
+        el.textContent = money(prices[el.dataset.zonePrice]) + ' ₽/час';
+      });
+
+      const form = document.getElementById('priceForm');
+      form.standard.value = prices.standard;
+      form.comfort.value = prices.comfort;
+      form.vip.value = prices.vip;
+    }
+
+    async function loadMyBookings() {
+      try {
+        const res = await fetch('/bookings/mine');
+        if (!res.ok) return;
+        const list = await res.json();
+        const wrap = document.getElementById('myBookings');
+        wrap.textContent = '';
+        document.getElementById('myBookingsEmpty').classList.toggle('hidden', list.length > 0);
+        list.forEach((booking) => {
+          wrap.append(bookingRow(booking, { cancelable: true }));
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadAdminBookings() {
+      if (!isAdmin) return;
+      try {
+        const res = await fetch('/admin/bookings');
+        if (!res.ok) return;
+        const list = await res.json();
+        const wrap = document.getElementById('adminBookings');
+        wrap.textContent = '';
+        document.getElementById('adminBookingsEmpty').classList.toggle('hidden', list.length > 0);
+        list.forEach((booking) => {
+          wrap.append(bookingRow(booking, { cancelable: true, showUser: true }));
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    const applicationStatuses = {
+      pending: 'На рассмотрении',
+      approved: 'Одобрена',
+      rejected: 'Отклонена'
+    };
+
+    async function loadApplications() {
+      if (!isSuperadmin) return;
+      try {
+        const res = await fetch('/api/applications');
+        if (!res.ok) return;
+        const list = await res.json();
+        const wrap = document.getElementById('adminApplications');
+        wrap.textContent = '';
+        document.getElementById('applicationsEmpty').classList.toggle('hidden', list.length > 0);
+
+        list.forEach((item) => {
+          const row = document.createElement('div');
+          row.className = 'booking-row';
+
+          const main = document.createElement('div');
+          const title = document.createElement('b');
+          title.textContent = item.clubName + ' /' + item.slug;
+          const info = document.createElement('p');
+          info.className = 'muted';
+          info.textContent = item.plan + ' · ' + (item.user ? item.user.login : '-') + ' · '
+            + new Date(item.createdAt).toLocaleDateString('ru-RU');
+          const status = document.createElement('p');
+          status.className = 'muted';
+          status.textContent = applicationStatuses[item.status] || item.status;
+          main.append(title, info, status);
+
+          if (item.message) {
+            const message = document.createElement('p');
+            message.className = 'muted';
+            message.textContent = item.message;
+            main.append(message);
+          }
+          if (item.reviewNote) {
+            const note = document.createElement('p');
+            note.className = 'muted';
+            note.textContent = 'Причина: ' + item.reviewNote;
+            main.append(note);
+          }
+
+          const actions = document.createElement('div');
+          actions.className = 'seat-actions';
+          if (item.status === 'pending') {
+            const approve = document.createElement('button');
+            approve.type = 'button';
+            approve.textContent = 'Одобрить';
+            approve.dataset.approveApp = String(item.id);
+            const reject = document.createElement('button');
+            reject.type = 'button';
+            reject.className = 'ghost';
+            reject.textContent = 'Отклонить';
+            reject.dataset.rejectApp = String(item.id);
+            actions.append(approve, reject);
+          } else if (item.status === 'approved') {
+            const link = document.createElement('a');
+            link.href = '/club.html?club=' + encodeURIComponent(item.slug);
+            const open = document.createElement('button');
+            open.type = 'button';
+            open.textContent = 'Открыть сайт';
+            link.append(open);
+            actions.append(link);
+          }
+          row.append(main, actions);
+          wrap.append(row);
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    document.getElementById('adminApplications').addEventListener('click', async (event) => {
+      const approve = event.target.closest('button[data-approve-app]');
+      const reject = event.target.closest('button[data-reject-app]');
+      if (!approve && !reject) return;
+
+      let note = '';
+      if (reject) {
+        const answer = window.prompt('Причина отказа:', '');
+        if (answer === null) return;
+        note = answer;
+      }
+
+      const button = approve || reject;
+      const id = approve ? approve.dataset.approveApp : reject.dataset.rejectApp;
+      const action = approve ? 'approve' : 'reject';
+      button.disabled = true;
+      try {
+        const res = await fetch('/api/applications/' + id + '/' + action, {
+          method: 'POST',
+          headers: reject ? { 'Content-Type': 'application/json' } : {},
+          body: reject ? JSON.stringify({ note }) : undefined
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || 'Не удалось изменить заявку');
+        toast(data.message || 'Заявка обновлена');
+        await loadApplications();
+      } catch (err) {
+        toast(err.message, false);
+        button.disabled = false;
+      }
+    });
+
+    function tournamentCard(tournament, adminMode) {
+      const card = document.createElement('article');
+      card.className = 'tournament-card';
+
+      const top = document.createElement('div');
+      top.className = 'tournament-top';
+      const title = document.createElement('h3');
+      title.textContent = tournament.title;
+      const tag = document.createElement('span');
+      tag.className = 'product-tag';
+      tag.textContent = tournament.game;
+      top.append(title, tag);
+
+      const when = document.createElement('p');
+      when.className = 'tournament-date';
+      when.textContent = new Date(tournament.start).toLocaleString('ru-RU', {
+        day: '2-digit',
+        month: 'long',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
+      const desc = document.createElement('p');
+      desc.className = 'muted';
+      desc.textContent = tournament.description || 'Подробности у оператора клуба.';
+
+      const foot = document.createElement('div');
+      foot.className = 'tournament-foot';
+      const fee = document.createElement('span');
+      fee.className = 'tournament-fee';
+      fee.textContent = tournament.entryFee > 0 ? 'Взнос: ' + money(tournament.entryFee) + ' ₽' : 'Бесплатно';
+      foot.append(fee);
+
+      if (adminMode) {
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'small danger';
+        del.textContent = 'Удалить';
+        del.dataset.deleteTournament = tournament.id;
+        foot.append(del);
+      }
+
+      card.append(top, when, desc, foot);
+      return card;
+    }
+
+    function renderTournaments() {
+      const wrap = document.getElementById('tournaments');
+      wrap.textContent = '';
+      document.getElementById('tournamentsEmpty').classList.toggle('hidden', tournaments.length > 0);
+      tournaments.forEach((tournament) => wrap.append(tournamentCard(tournament, false)));
+
+      const adminWrap = document.getElementById('adminTournaments');
+      adminWrap.textContent = '';
+      document.getElementById('adminTournamentsEmpty').classList.toggle('hidden', tournaments.length > 0);
+      tournaments.forEach((tournament) => adminWrap.append(tournamentCard(tournament, true)));
+    }
+
+    async function loadTournaments() {
+      try {
+        const res = await fetch('/tournaments');
+        if (!res.ok) return;
+        tournaments = await res.json();
+        renderTournaments();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function setDefaultTournamentStart() {
+      const form = document.getElementById('tournamentForm');
+      const date = new Date();
+      date.setDate(date.getDate() + 7);
+      date.setHours(19, 0, 0, 0);
+      form.start.value = toDateTimeLocal(date);
+    }
+
+    function bookingRow(booking, options) {
+      const opts = options || {};
+      const row = document.createElement('div');
+      row.className = 'booking-row';
+
+      const main = document.createElement('div');
+      const title = document.createElement('b');
+      const seats = booking.seats && booking.seats.length
+        ? booking.seats.map((item) => item.seat)
+        : (booking.seat ? [booking.seat] : []);
+      const seatNames = seats.map((item) => item.name).join(', ');
+      const seatZone = seats[0] ? seats[0].zone : '';
+      title.textContent = seatNames + ' · ' + (zoneLabels[seatZone] || seatZone);
+      const when = document.createElement('p');
+      when.className = 'muted';
+      when.textContent = formatRange(booking.start, booking.end);
+      main.append(title, when);
+
+      if (opts.showUser && booking.user) {
+        const user = document.createElement('p');
+        user.className = 'muted';
+        user.textContent = 'Пользователь: ' + booking.user.login;
+        main.append(user);
+      }
+
+      const now = new Date();
+      const start = new Date(booking.start);
+      const end = new Date(booking.end);
+      const status = document.createElement('span');
+      if (now >= start && now < end) {
+        status.className = 'badge occupied';
+        status.textContent = 'сейчас';
+      } else if (now < start) {
+        status.className = 'badge free';
+        status.textContent = 'предстоит';
+      } else {
+        status.className = 'badge maintenance';
+        status.textContent = 'прошла';
+      }
+
+      row.append(main, status);
+
+      if (opts.cancelable) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'small danger';
+        btn.textContent = 'Отменить';
+        btn.dataset.cancelBooking = booking.id;
+        row.append(btn);
+      }
+
+      return row;
+    }
+
+    async function cancelBooking(id) {
+      const res = await fetch('/bookings/' + id, { method: 'DELETE' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast(data.message || 'Не удалось отменить бронь', false);
+        return;
+      }
+      toast('Бронь отменена');
+      await loadSeats();
+      await loadMyBookings();
+      if (isAdmin) await loadAdminBookings();
+      if (activeSeat && !modal.classList.contains('hidden')) await loadSchedule();
+    }
+
+    function bindCancelButtons(container) {
+      container.addEventListener('click', (event) => {
+        const btn = event.target.closest('button[data-cancel-booking]');
+        if (!btn) return;
+        if (!confirm('Отменить эту бронь?')) return;
+        cancelBooking(btn.dataset.cancelBooking);
+      });
+    }
+
+    function defaultDateAndTimes() {
+      const now = new Date();
+      const start = new Date(now.getTime());
+      start.setHours(start.getHours() + 1, 0, 0, 0);
+      const end = new Date(start.getTime() + 60 * 60 * 1000);
+
+      modalDate.value = toDateInput(start);
+      startTime.value = pad(start.getHours()) + ':' + pad(start.getMinutes());
+      endTime.value = pad(end.getHours()) + ':' + pad(end.getMinutes());
+    }
+
+    function updateModalHeader() {
+      if (!activeSeat) return;
+      const price = prices[activeSeat.zone] || 0;
+      document.getElementById('modalSeatName').textContent = activeSeat.name;
+      document.getElementById('modalSeatMeta').textContent =
+        (zoneLabels[activeSeat.zone] || activeSeat.zone) + ' · ' + money(price) + ' ₽/час';
+      const badge = document.getElementById('modalSeatStatus');
+      badge.className = 'badge ' + activeSeat.status;
+      badge.textContent = statusLabels[activeSeat.status] || activeSeat.status;
+
+      const maintenance = activeSeat.status === 'maintenance';
+      bookingForm.querySelectorAll('input, button').forEach((el) => {
+        el.disabled = maintenance;
+      });
+      maintenanceNote.classList.toggle('hidden', !maintenance);
+    }
+
+    function openSeatModal(seat) {
+      activeSeat = seat;
+      modal.classList.remove('hidden');
+      document.body.classList.add('modal-open');
+      bookingForm.reset();
+      modalDate.min = toDateInput(new Date());
+      defaultDateAndTimes();
+      updateModalHeader();
+      updateTotal();
+      loadSchedule();
+    }
+
+    function closeSeatModal() {
+      modal.classList.add('hidden');
+      document.body.classList.remove('modal-open');
+      activeSeat = null;
+    }
+
+    function updateTotal() {
+      if (!activeSeat) {
+        totalPrice.textContent = '0 ₽';
+        return;
+      }
+      if (!startTime.value || !endTime.value) {
+        totalPrice.textContent = '0 ₽';
+        return;
+      }
+
+      let start = timeToMinutes(startTime.value);
+      let end = timeToMinutes(endTime.value);
+      if (end <= start) end += 1440;
+
+      const hours = (end - start) / 60;
+      const price = prices[activeSeat.zone] || 0;
+      totalPrice.textContent = money(Math.round(hours * price)) + ' ₽';
+
+      timeHint.textContent = end > 1440
+        ? 'Бронь перейдёт через полночь — до ' + endTime.value + ' следующего дня.'
+        : 'Длительность: ' + hours + ' ч.';
+    }
+
+    async function loadSchedule() {
+      if (!activeSeat) return;
+      const date = modalDate.value;
+      if (!date) return;
+
+      try {
+        const res = await fetch('/seats/' + activeSeat.id + '/schedule?date=' + encodeURIComponent(date));
+        if (!res.ok) {
+          toast('Не удалось загрузить расписание', false);
+          return;
+        }
+        renderSchedule(await res.json());
+      } catch (err) {
+        toast(err.message, false);
+      }
+    }
+
+    function renderSchedule(data) {
+      const track = document.getElementById('timelineTrack');
+      track.textContent = '';
+      intervalList.textContent = '';
+
+      const today = toDateInput(new Date());
+      if (data.date === today) {
+        const now = new Date();
+        const marker = document.createElement('div');
+        marker.className = 'now-marker';
+        marker.style.left = ((now.getHours() * 60 + now.getMinutes()) / 1440 * 100) + '%';
+        track.append(marker);
+      }
+
+      if (!data.intervals.length) {
+        const free = document.createElement('p');
+        free.className = 'muted';
+        free.textContent = 'Весь день свободен — выбирай любое время.';
+        intervalList.append(free);
+      }
+
+      data.intervals.forEach((interval) => {
+        const startMin = timeToMinutes(interval.start);
+        const endMin = timeToMinutes(interval.end);
+
+        const block = document.createElement('div');
+        block.className = 'busy-block' + (interval.mine ? ' mine' : '');
+        block.style.left = (startMin / 1440 * 100) + '%';
+        block.style.width = Math.max((endMin - startMin) / 1440 * 100, 1.5) + '%';
+        block.title = interval.start + '–' + interval.end + (interval.mine ? ' (ваша бронь)' : '');
+        track.append(block);
+
+        const item = document.createElement('div');
+        item.className = 'interval' + (interval.mine ? ' mine' : '');
+
+        const time = document.createElement('span');
+        time.className = 'interval-time';
+        let label = interval.start + '–' + interval.end;
+        if (interval.continuesNext) label += ' (до ' + interval.fullEnd + ' следующего дня)';
+        if (interval.continuesFrom) label += ' (началось в ' + interval.fullStart + ' предыдущего дня)';
+        time.textContent = label;
+
+        const who = document.createElement('span');
+        who.className = 'interval-who';
+        who.textContent = interval.mine ? 'ваша бронь' : 'занято';
+
+        item.append(time, who);
+
+        if (interval.mine && interval.id) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'small danger';
+          btn.textContent = 'Отменить';
+          btn.dataset.cancelBooking = interval.id;
+          item.append(btn);
+        }
+
+        intervalList.append(item);
+      });
+    }
+
+    grid.addEventListener('click', async (event) => {
+      const btn = event.target.closest('button[data-action]');
+      if (!btn) return;
+
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+
+      if (action === 'delete' && !confirm('Удалить это место?')) return;
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/seats/' + id, {
+          method: action === 'delete' ? 'DELETE' : 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: action === 'delete' ? undefined : JSON.stringify({ status: action })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Не удалось обновить место');
+        }
+        toast(action === 'delete' ? 'Место удалено' : 'Статус обновлён');
+        await loadSeats();
+      } catch (err) {
+        toast(err.message, false);
+        btn.disabled = false;
+      }
+    });
+
+    document.querySelector('.building-rooms').addEventListener('click', (event) => {
+      if (mapEditorActive) return;
+      const btn = event.target.closest('button.map-seat');
+      if (!btn) return;
+      const seat = seats.find((item) => String(item.id) === btn.dataset.id);
+      if (seat) openSeatModal(seat);
+    });
+
+    document.getElementById('modalClose').addEventListener('click', closeSeatModal);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closeSeatModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeSeatModal();
+    });
+
+    modalDate.addEventListener('change', () => {
+      loadSchedule();
+      updateTotal();
+    });
+    startTime.addEventListener('input', updateTotal);
+    endTime.addEventListener('input', updateTotal);
+
+    const cardNumber = document.getElementById('cardNumber');
+    const cardExpiry = document.getElementById('cardExpiry');
+    const cardCvv = document.getElementById('cardCvv');
+    const cardName = document.getElementById('cardName');
+
+    cardNumber.addEventListener('input', () => {
+      const digits = cardNumber.value.replace(/\D/g, '').slice(0, 16);
+      cardNumber.value = digits.replace(/(.{4})/g, '$1 ').trim();
+    });
+    cardExpiry.addEventListener('input', () => {
+      const digits = cardExpiry.value.replace(/\D/g, '').slice(0, 4);
+      cardExpiry.value = digits.length > 2 ? digits.slice(0, 2) + '/' + digits.slice(2) : digits;
+    });
+    cardCvv.addEventListener('input', () => {
+      cardCvv.value = cardCvv.value.replace(/\D/g, '').slice(0, 3);
+    });
+
+    function validateCard() {
+      const digits = cardNumber.value.replace(/\D/g, '');
+      if (digits.length < 13) return 'Введите корректный номер карты';
+      const match = cardExpiry.value.match(/^(\d{2})\/(\d{2})$/);
+      if (!match || Number(match[1]) < 1 || Number(match[1]) > 12) {
+        return 'Введите срок действия в формате ММ/ГГ';
+      }
+      if (!/^\d{3}$/.test(cardCvv.value)) return 'Введите CVV (3 цифры)';
+      if (!cardName.value.trim()) return 'Введите имя на карте';
+      return null;
+    }
+
+    bookingForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!activeSeat) return;
+
+      const error = validateCard();
+      if (error) {
+        toast(error, false);
+        return;
+      }
+      if (!modalDate.value || !startTime.value || !endTime.value) {
+        toast('Выберите дату и время', false);
+        return;
+      }
+
+      payBtn.disabled = true;
+      const oldText = payBtn.textContent;
+      payBtn.textContent = 'Оплата…';
+
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 600));
+        const res = await fetch('/seats/' + activeSeat.id + '/book', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            date: modalDate.value,
+            start: startTime.value,
+            end: endTime.value
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Не удалось забронировать место');
+        }
+
+        toast('Оплата прошла (демо). Место забронировано!');
+        cardNumber.value = '';
+        cardExpiry.value = '';
+        cardCvv.value = '';
+        cardName.value = '';
+        await loadSeats();
+        await loadMyBookings();
+        if (isAdmin) await loadAdminBookings();
+        await loadSchedule();
+      } catch (err) {
+        toast(err.message, false);
+      } finally {
+        payBtn.disabled = false;
+        payBtn.textContent = oldText;
+      }
+    });
+
+    document.getElementById('addSeatForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const btn = form.querySelector('button[type="submit"]');
+      const name = form.name.value.trim();
+
+      if (!name) {
+        toast('Введите название места', false);
+        return;
+      }
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/seats', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            zone: form.zone.value,
+            status: form.status.value
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Не удалось добавить место');
+        }
+        form.reset();
+        toast('Место добавлено');
+        await loadSeats();
+      } catch (err) {
+        toast(err.message, false);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('priceForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const btn = form.querySelector('button[type="submit"]');
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/admin/prices', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            standard: Number(form.standard.value),
+            comfort: Number(form.comfort.value),
+            vip: Number(form.vip.value)
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Не удалось сохранить цены');
+        }
+        toast('Цены сохранены');
+        await loadPrices();
+        updateTotal();
+      } catch (err) {
+        toast(err.message, false);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('tournamentForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const btn = form.querySelector('button[type="submit"]');
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/admin/tournaments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: form.title.value.trim(),
+            game: form.game.value.trim(),
+            start: form.start.value,
+            entryFee: Number(form.entryFee.value),
+            description: form.description.value.trim()
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Не удалось добавить турнир');
+        }
+        toast('Турнир добавлен');
+        form.reset();
+        setDefaultTournamentStart();
+        await loadTournaments();
+      } catch (err) {
+        toast(err.message, false);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('adminTournaments').addEventListener('click', async (event) => {
+      const btn = event.target.closest('button[data-delete-tournament]');
+      if (!btn) return;
+      if (!confirm('Удалить этот турнир?')) return;
+
+      btn.disabled = true;
+      try {
+        const res = await fetch('/admin/tournaments/' + btn.dataset.deleteTournament, { method: 'DELETE' });
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.message || 'Не удалось удалить турнир');
+        }
+        toast('Турнир удалён');
+        await loadTournaments();
+      } catch (err) {
+        toast(err.message, false);
+        btn.disabled = false;
+      }
+    });
+
+    function applyPlanFeatures(club) {
+      clubFeatures = club.features || {};
+      document.body.dataset.plan = club.plan;
+      const seatMap = !!clubFeatures.seatMap;
+      const booking = !!clubFeatures.booking;
+      const activeTab = seatMap ? 'map' : (booking ? 'list' : 'club');
+
+      document.getElementById('navMap').classList.toggle('hidden', !seatMap);
+      document.getElementById('tab-map').classList.toggle('hidden', !seatMap);
+      document.getElementById('navList').classList.toggle('hidden', !booking || seatMap);
+      document.getElementById('tab-list').classList.toggle('hidden', !booking || seatMap);
+
+      document.querySelectorAll('.tab-link').forEach((link) => {
+        link.classList.toggle('active', link.dataset.tab === activeTab);
+      });
+      document.querySelectorAll('.tab').forEach((tab) => {
+        tab.classList.toggle('active', tab.id === 'tab-' + activeTab);
+      });
+
+      if (!booking) {
+        document.getElementById('seatListNote').textContent = 'Онлайн-бронирование на этом тарифе недоступно — запись по телефону.';
+      }
+    }
+
+    document.querySelectorAll('.tab-link').forEach((link) => {
+      link.addEventListener('click', () => {
+        document.querySelectorAll('.tab-link').forEach((l) => {
+          l.classList.toggle('active', l === link);
+        });
+        document.querySelectorAll('.tab').forEach((tab) => {
+          tab.classList.remove('active');
+        });
+        document.getElementById('tab-' + link.dataset.tab).classList.add('active');
+      });
+    });
+
+    bindCancelButtons(document.getElementById('myBookings'));
+    bindCancelButtons(document.getElementById('adminBookings'));
+    bindCancelButtons(intervalList);
+
+    async function finishDrag() {
+      if (draggedSeatId === null) return;
+      const seat = seats.find((item) => item.id === draggedSeatId);
+      draggedSeatId = null;
+      dragPointerId = null;
+      dragContainer = null;
+      document.querySelectorAll('.map-seat.editor.dragging').forEach((btn) => btn.classList.remove('dragging'));
+      if (!seat || !mapEditorActive) return;
+
+      const buttons = Array.from(document.querySelectorAll('.map-seat.editor')).filter((btn) => Number(btn.dataset.id) === seat.id);
+      const label = seat.name.includes('-') ? seat.name.split('-')[1] : seat.name;
+      buttons.forEach((btn) => { btn.disabled = true; btn.textContent = '…'; });
+      try {
+        const res = await fetch('/seats/' + seat.id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ x: seat.x, y: seat.y })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || 'Не удалось сохранить место');
+        toast('Место перемещено');
+      } catch (error) {
+        toast(error.message, false);
+        await loadSeats();
+      } finally {
+        buttons.forEach((btn) => { btn.disabled = false; btn.textContent = label; });
+      }
+    }
+
+    document.addEventListener('pointermove', (event) => {
+      if (draggedSeatId === null || !mapEditorActive) return;
+      if (dragPointerId !== null && event.pointerId !== dragPointerId) return;
+      if ((event.buttons & 1) === 0) {
+        finishDrag();
+        return;
+      }
+      const container = dragContainer || event.target.closest('.seat-map');
+      if (!container) return;
+      const gridWidth = Number(container.dataset.gridWidth) || 5;
+      const gridHeight = Number(container.dataset.gridHeight) || 4;
+      const rect = container.getBoundingClientRect();
+      const col = Math.max(0, Math.min(gridWidth - 1, Math.floor((event.clientX - rect.left) / (rect.width / gridWidth))));
+      const row = Math.max(0, Math.min(gridHeight - 1, Math.floor((event.clientY - rect.top) / (rect.height / gridHeight))));
+      const seat = seats.find((item) => item.id === draggedSeatId);
+      if (!seat || (seat.x === col && seat.y === row)) return;
+      seat.x = col;
+      seat.y = row;
+      document.querySelectorAll('.map-seat.editor').forEach((btn) => {
+        if (Number(btn.dataset.id) === seat.id) {
+          btn.style.gridColumn = String(col + 1);
+          btn.style.gridRow = String(row + 1);
+        }
+      });
+    });
+
+    document.addEventListener('pointerup', (event) => {
+      if (draggedSeatId === null) return;
+      if (dragPointerId !== null && event.pointerId !== dragPointerId) return;
+      finishDrag();
+    });
+
+    document.addEventListener('pointercancel', (event) => {
+      if (draggedSeatId === null) return;
+      if (dragPointerId !== null && event.pointerId !== dragPointerId) return;
+      finishDrag();
+    });
+
+    document.addEventListener('lostpointercapture', (event) => {
+      if (draggedSeatId === null) return;
+      if (dragPointerId !== null && event.pointerId !== dragPointerId) return;
+      finishDrag();
+    });
+
+    window.addEventListener('blur', () => {
+      finishDrag();
+    });
+
+    document.getElementById('toggleMapEditor').addEventListener('click', () => {
+      mapEditorActive = !mapEditorActive;
+      draggedSeatId = null;
+      dragPointerId = null;
+      dragContainer = null;
+      document.getElementById('toggleMapEditor').textContent = mapEditorActive ? 'Выключить редактор карты' : 'Включить редактор карты';
+      document.getElementById('mapHint').classList.toggle('hidden', !mapEditorActive);
+      renderMap();
+    });
+    async function logout() {
+      await fetch('/logout', { method: 'POST' });
+      window.location.href = '/login.html';
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    document.getElementById('logoutBtn2').addEventListener('click', logout);
+
+    let planSettings = {};
+    let currentClub = null;
+
+    function renderPlanAdmin() {
+      const info = planSettings[currentClub.plan];
+      const wrap = document.getElementById('planAdminInfo');
+      wrap.textContent = '';
+      if (!info) return;
+      const groups = [
+        ['Плюсы', info.advantages || []],
+        ['Требования', info.requirements || []],
+        ['Настройки', info.settings || []]
+      ];
+      groups.forEach(([title, items]) => {
+        const group = document.createElement('div');
+        group.className = 'plan-info-group';
+        const heading = document.createElement('h3');
+        heading.textContent = title;
+        const list = document.createElement('ul');
+        items.forEach((item) => {
+          const li = document.createElement('li');
+          li.textContent = item;
+          list.append(li);
+        });
+        group.append(heading, list);
+        wrap.append(group);
+      });
+    }
+
+    async function loadPlanSettings() {
+      const [plansRes, clubRes] = await Promise.all([fetch('/api/plans'), fetch('/api/club')]);
+      if (!plansRes.ok || !clubRes.ok) return;
+      planSettings = await plansRes.json();
+      currentClub = await clubRes.json();
+      renderPlanAdmin();
+      document.getElementById('adminPlanSelect').value = currentClub.plan;
+      if (isSuperadmin) {
+        document.getElementById('planAdminControls').classList.remove('hidden');
+      }
+    }
+
+    document.getElementById('savePlanBtn').addEventListener('click', async () => {
+      const message = document.getElementById('planAdminMessage');
+      const plan = document.getElementById('adminPlanSelect').value;
+      message.textContent = '';
+      try {
+        const res = await fetch('/admin/plan', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ plan })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.message || 'Не удалось сменить тариф');
+        message.textContent = 'Тариф сохранён';
+        await loadPlanSettings();
+        await loadPrices();
+        await loadSeats();
+      } catch (error) {
+        message.textContent = error.message;
+      }
+    });
+
+    (async function init() {
+      try {
+        const res = await fetch('/me');
+        if (!res.ok) {
+          window.location.href = '/login.html';
+          return;
+        }
+        setUser(await res.json());
+        const clubRes = await fetch('/api/club');
+        if (clubRes.ok) applyPlanFeatures(await clubRes.json());
+        await loadPrices();
+        await loadSeats();
+        await loadMyBookings();
+        await loadTournaments();
+        if (isAdmin) {
+          await loadPlanSettings();
+          await loadAdminBookings();
+          setDefaultTournamentStart();
+        }
+        if (isSuperadmin) {
+          document.getElementById('applicationsBlock').classList.remove('hidden');
+          await loadApplications();
+        }
+      } catch (err) {
+        toast('Ошибка загрузки: ' + err.message, false);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Компьютерный клуб</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-subtle: #12121a;
+      --fg: #e8e8f0;
+      --muted: #6b6b80;
+      --accent: #00d4aa;
+      --accent-hover: #00f5c4;
+      --warning: #ff6b6b;
+      --card: #1a1a24;
+      --border: #2a2a3a;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: system-ui, -apple-system, sans-serif; font-size: 16px; }
+    body { color: var(--fg); background: var(--bg); line-height: 1.5; }
+
+    /* Header */
+    header { padding: 1.5rem; background: linear-gradient(135deg, #1a1a24 0%, #0d0d12 100%); border-bottom: 1px solid var(--border); }
+    .header-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .club-info { display: flex; flex-direction: column; align-items: flex-start; }
+    .club-name { font-size: 1.8rem; font-weight: 600; color: var(--fg); margin-bottom: 0.25rem; }
+    .plan-badge { display: inline-block; padding: 0.25rem 0.75rem; background: var(--accent); color: #0a0a0f; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-left: 1rem; }
+    .contact-row { display: flex; flex-direction: column; gap: 0.25rem; color: var(--muted); }
+    .contact-row span { color: var(--fg); }
+    .btn { display: inline-block; padding: 0.6rem 1.2rem; border-radius: var(--radius); border: none; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
+    .btn-primary { background: var(--accent); color: #0a0a0f; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--fg); }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .user-panel { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+
+    /* Main */
+    main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section h2 { font-size: 1.3rem; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+    .error { padding: 1rem; background: rgba(255,107,107,0.1); color: var(--warning); border-radius: var(--radius); margin-bottom: 1rem; display: none; }
+    .error.visible { display: block; }
+
+    /* Prices */
+    .prices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+    .price-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; text-align: center; }
+    .price-card .zone { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.5rem; }
+    .price-card .price { font-size: 2rem; font-weight: 700; color: var(--accent); }
+
+    /* Menu */
+    .menu-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .menu-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .menu-item .name { font-weight: 500; }
+    .menu-item .price { color: var(--accent); font-weight: 700; }
+
+    /* Tournaments */
+    .tournaments-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .tournament-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+    .tournament-card h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+    .tournament-card .game { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.25rem; }
+    .tournament-card .datetime { font-size: 0.75rem; color: var(--muted); }
+    .tournament-card .fee { color: var(--accent); font-weight: 700; }
+
+    /* Booking */
+    .booking-block { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+    .booking-block button { width: 100%; }
+
+    /* Seat map */
+    .seat-map { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+    .seat-map legend { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); margin-bottom: 0.75rem; }
+    .seats-grid { display: grid; gap: 2px; }
+    .seat-cell { width: 24px; height: 24px; border-radius: 3px; cursor: pointer; transition: transform 0.1s; }
+    .seat-cell:active { transform: scale(0.95); }
+    .seat-free { background: #00a859; }
+    .seat-occupied { background: #ff5f57; }
+    .seat-maintenance { background: #777777; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .header-container { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+      .user-panel { width: 100%; justify-content: flex-end; }
+      .btn { width: 100%; }
+    }
+  </style>
+  <link rel="stylesheet" href="plan-themes.css">
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <div class="club-info">
+        <div class="club-name" id="clubName"></div>
+        <div class="plan-badge" id="planBadge"></div>
+      </div>
+      <div class="contact-row">
+        <span>Адрес: <span id="address">—</span></span>
+        <span>Телефон: <span id="phone">—</span></span>
+        <span>Email: <a href="mailto:" id="email">—</a></span>
+        <span>Часы: <span id="hours">—</span></span>
+      </div>
+      <div class="user-panel">
+        <button class="btn btn-secondary" id="loginBtn">Войти</button>
+        <div class="user-profile" id="userProfile" style="display:none;">
+          <span id="userLogin"></span>
+          <button class="btn btn-secondary" id="logoutBtn">Выйти</button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div id="unifiedNav" class="unified-nav"></div>
+  <script src="nav.js"></script>
+
+  <main id="main">
+    <div class="error" id="errorBlock"></div>
+
+    <section id="description" class="section">
+      <h2>О клубе</h2>
+      <div id="descriptionText"></div>
+    </section>
+
+    <section id="tariff" class="section">
+      <h2>Тариф и возможности</h2>
+      <div id="planInfo"></div>
+    </section>
+
+    <section id="prices" class="section">
+      <h2>Цены</h2>
+      <div class="prices-grid">
+        <div class="price-card" id="priceStandard">
+          <div class="zone">Стандарт</div>
+          <div class="price" id="priceStandardVal">— ₸</div>
+        </div>
+        <div class="price-card" id="priceComfort">
+          <div class="zone">Комфорт</div>
+          <div class="price" id="priceComfortVal">— ₸</div>
+        </div>
+        <div class="price-card" id="priceVip">
+          <div class="zone">VIP</div>
+          <div class="price" id="priceVipVal">— ₸</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu" class="section">
+      <h2>Бар / Меню</h2>
+      <div class="menu-list" id="menuList"></div>
+    </section>
+
+    <section id="tournaments" class="section">
+      <h2>Турниры</h2>
+      <div class="tournaments-grid" id="tournamentsGrid"></div>
+    </section>
+
+    <section id="booking" class="section">
+      <h2>Бронь</h2>
+      <div class="booking-block" id="bookingBlock"></div>
+    </section>
+
+    <section id="seatMap" class="section">
+      <h2>Карта мест</h2>
+      <div class="seat-map" id="seatMapContainer">
+        <legend>Ключ: Зеленый — свободно, Красный — занято, Серый — техобслуживание</legend>
+        <div class="seats-grid" id="seatsGrid"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const club = new URLSearchParams(location.search).get('club') || 'nexus-lux';
+      const base = `${location.origin}/api`;
+
+      const errorBlock = document.getElementById('errorBlock');
+      const showError = (msg) => {
+        errorBlock.textContent = msg;
+        errorBlock.classList.add('visible');
+      };
+      const hideError = () => errorBlock.classList.remove('visible');
+
+      const fetchApi = async (endpoint, allow401 = false) => {
+        const url = new URL(endpoint, base);
+        url.searchParams.set('club', club);
+        const res = await fetch(url.toString(), { credentials: 'include' });
+        if (!res.ok && !(allow401 && res.status === 401)) throw new Error(`HTTP ${res.status}`);
+        return res.ok ? res.json() : {};
+      };
+
+      const render = async () => {
+        try {
+          hideError();
+
+          const [clubData, halls, menu, prices, tournaments, seats] = await Promise.all([
+            fetchApi('/api/club'),
+            fetchApi('/api/halls'),
+            fetchApi('/menu'),
+            fetchApi('/prices'),
+            fetchApi('/tournaments'),
+            fetchApi('/seats')
+          ]);
+
+          // 1. Header
+          document.body.dataset.plan = clubData.plan;
+          const info = clubData.planInfo || {};
+          document.getElementById('clubName').textContent = clubData.name;
+          document.getElementById('planBadge').textContent = info.tier || clubData.plan;
+          document.getElementById('address').textContent = clubData.address || '—';
+          document.getElementById('phone').textContent = clubData.phone || '—';
+          document.getElementById('email').textContent = clubData.email || '—';
+          document.getElementById('hours').textContent = clubData.hours || '—';
+
+          const loginBtn = document.getElementById('loginBtn');
+          const userProfile = document.getElementById('userProfile');
+          const userLogin = document.getElementById('userLogin');
+
+          const meRes = await fetchApi('/me', true);
+          if (meRes.userId) {
+            userLogin.textContent = meRes.login;
+            loginBtn.style.display = 'none';
+            userProfile.style.display = 'flex';
+            logoutBtn.onclick = async () => {
+              await fetch('/logout', { method: 'POST', credentials: 'include' });
+              location.reload();
+            };
+          } else {
+            loginBtn.style.display = 'inline-block';
+            userProfile.style.display = 'none';
+            loginBtn.onclick = () => {
+              location.href = `/login.html?club=${club}`;
+            };
+          }
+
+          // 2. Description
+          document.getElementById('descriptionText').textContent = clubData.description || '';
+
+          const planBox = document.getElementById('planInfo');
+          planBox.textContent = '';
+          const intro = document.createElement('p');
+          intro.textContent = info.intro || '';
+          planBox.append(intro);
+          const columns = document.createElement('div');
+          columns.className = 'plan-info-columns';
+          const groups = [
+            ['Плюсы тарифа', info.advantages || []],
+            ['Что нужно', info.requirements || []],
+            ['Настройки', info.settings || []]
+          ];
+          groups.forEach(([title, items]) => {
+            const group = document.createElement('div');
+            group.className = 'plan-info-group';
+            const heading = document.createElement('h3');
+            heading.textContent = title;
+            const list = document.createElement('ul');
+            items.forEach((item) => {
+              const li = document.createElement('li');
+              li.textContent = item;
+              list.append(li);
+            });
+            group.append(heading, list);
+            columns.append(group);
+          });
+          planBox.append(columns);
+          const note = document.createElement('p');
+          note.className = 'plan-note';
+          note.textContent = info.bookingNote || '';
+          planBox.append(note);
+
+          // 3. Prices
+          const pMap = {};
+          prices.forEach(p => pMap[p.zone] = p.price);
+          document.getElementById('priceStandardVal').textContent = (pMap.standard || 0) + ' ₸';
+          document.getElementById('priceComfortVal').textContent = (pMap.comfort || 0) + ' ₸';
+          document.getElementById('priceVipVal').textContent = (pMap.vip || 0) + ' ₸';
+
+          // 4. Menu
+          const menuByCat = {};
+          menu.forEach(item => {
+            if (!menuByCat[item.category]) menuByCat[item.category] = [];
+            menuByCat[item.category].push(item);
+          });
+          const menuList = document.getElementById('menuList');
+          menuList.innerHTML = '';
+          Object.entries(menuByCat).forEach(([cat, items]) => {
+            const catDiv = document.createElement('div');
+            catDiv.style.marginBottom = '1rem';
+            const h = document.createElement('div');
+            h.style.fontSize = '0.8rem'; h.style.textTransform = 'uppercase'; h.style.letterSpacing = '0.05em'; h.style.color = 'var(--muted)'; h.style.marginBottom = '0.3rem';
+            h.textContent = cat;
+            catDiv.appendChild(h);
+            items.forEach(it => {
+              const el = document.createElement('div');
+              el.className = 'menu-item';
+              const nameSpan = document.createElement('span');
+              nameSpan.className = 'name';
+              nameSpan.textContent = it.name;
+              const priceSpan = document.createElement('span');
+              priceSpan.className = 'price';
+              priceSpan.textContent = it.price + ' ₸';
+              el.append(nameSpan, priceSpan);
+              catDiv.appendChild(el);
+            });
+            menuList.appendChild(catDiv);
+          });
+
+          // 5. Tournaments
+          const tournGrid = document.getElementById('tournamentsGrid');
+          tournGrid.innerHTML = '';
+          if (tournaments.length === 0) {
+            tournGrid.innerHTML = '<p>Скоро турниров нет</p>';
+          } else {
+            tournaments.forEach(t => {
+              const el = document.createElement('div');
+              el.className = 'tournament-card';
+              const title = document.createElement('h3');
+              title.textContent = t.title;
+              const game = document.createElement('div');
+              game.className = 'game';
+              game.textContent = t.game;
+              const when = document.createElement('div');
+              when.className = 'datetime';
+              when.textContent = new Date(t.start).toLocaleString('ru-RU');
+              const fee = document.createElement('div');
+              fee.className = 'fee';
+              fee.textContent = 'Вход: ' + t.entryFee + ' ₸';
+              const desc = document.createElement('p');
+              desc.textContent = t.description || '';
+              el.append(title, game, when, fee, desc);
+              tournGrid.appendChild(el);
+            });
+          }
+
+          // 6. Booking
+          const bookingBlock = document.getElementById('bookingBlock');
+          const features = clubData.features || {};
+          if (features.booking) {
+            bookingBlock.innerHTML = '<button class="btn btn-primary">Забронировать место</button>';
+            bookingBlock.querySelector('button').onclick = () => {
+              location.href = `/menu.html?club=${club}`;
+            };
+          } else {
+            bookingBlock.innerHTML = '<p>Онлайн-бронирование доступно на тарифах Standard и Lux</p><button class="btn btn-secondary">Связаться</button>';
+            bookingBlock.querySelector('button').onclick = () => location.href = `tel:${clubData.phone || ''}`;
+          }
+
+          // 7. Seat map
+          const seatMapContainer = document.getElementById('seatMapContainer');
+          const seatsGrid = document.getElementById('seatsGrid');
+          const featuresSM = features.seatMap;
+          if (featuresSM) {
+            seatMapContainer.style.display = 'block';
+            // Group halls and seats by hallId
+            const hallMap = {};
+            halls.forEach(h => hallMap[h.id] = h);
+            const seatsByHall = {};
+            seats.forEach(s => {
+              if (!seatsByHall[s.hallId]) seatsByHall[s.hallId] = [];
+              seatsByHall[s.hallId].push(s);
+            });
+            // Build grid per hall
+            let gridHTML = '';
+            halls.forEach(h => {
+              // Determine grid template columns/rows
+              const cols = Math.max(1, h.width);
+              const rows = Math.max(1, h.height);
+              const cellSize = 24;
+              const gridStyle = `grid-template-columns: repeat(${cols}, 1fr); grid-template-rows: repeat(${rows}, 1fr);`;
+              let hallSeats = seatsByHall[h.id] || [];
+              // Build cells
+              let cells = '';
+              for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                  const seat = hallSeats.find(s => s.x === x && s.y === y);
+                  const cls = seat ? (seat.status === 'free' ? 'seat-free' : seat.status === 'occupied' ? 'seat-occupied' : 'seat-maintenance') : '';
+                  const id = seat ? `data-id="${seat.id}"` : '';
+                  cells += `<div class="seat-cell ${cls}" ${id}></div>`;
+                }
+              }
+              gridHTML += `<div class="seats-grid" style="${gridStyle}" data-hall-id="${h.id}">${cells}</div>`;
+            });
+            seatsGrid.innerHTML = gridHTML;
+            // Click on free seat
+            document.querySelectorAll('.seat-cell.seat-free').forEach(el => {
+              el.addEventListener('click', () => {
+                const seatId = el.getAttribute('data-id');
+                if (seatId) location.href = `/menu.html?club=${club}&seat=${seatId}`;
+              });
+            });
+          } else {
+            seatMapContainer.style.display = 'none';
+          }
+
+        } catch (e) {
+          showError(`Ошибка загрузки данных: ${e.message}`);
+        }
+      };
+
+      render();
+    })();
+  </script>
+</body>
+</html>

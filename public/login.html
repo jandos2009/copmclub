@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Вход</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="extra.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
@@ -18,6 +19,22 @@
     </form>
   </div>
   <script>
+    const params = new URLSearchParams(location.search);
+    const club = params.get('club') || '';
+    const next = params.get('next') || '';
+
+    function redirectAfterAuth() {
+      if (next.startsWith('/') && !next.startsWith('//')) return next;
+      return '/menu.html' + (club ? '?club=' + encodeURIComponent(club) : '');
+    }
+
+    if (club || next) {
+      const query = new URLSearchParams();
+      if (club) query.set('club', club);
+      if (next) query.set('next', next);
+      document.querySelector('a[href="/"]').href = '/?' + query.toString();
+    }
+
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const form = e.target;
@@ -34,7 +51,7 @@
         });
         const data = await res.json();
         if (res.ok) {
-          window.location.href = '/profile.html';
+          window.location.href = redirectAfterAuth();
         } else {
           msg.textContent = data.message;
         }
