@@ -2,22 +2,102 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Вход</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="extra.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f0">
+  <title>Вход — Клубная платформа</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css">
 </head>
-<body>
-  <div id="pond">
-    <form id="loginForm" class="fish">
-      <h2>Вход</h2>
-      <input type="text" name="login" placeholder="Имя или адрес" required>
-      <input type="password" name="password" placeholder="Пароль" required>
-      <button type="submit">Войти</button>
-      <p id="message"></p>
-      <a href="/">Нет аккаунта? Регистрация</a>
-    </form>
-  </div>
+<body class="city auth-page">
+  <a class="skip-link" href="#main">К содержимому</a>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="/clubs.html">
+        <span class="brand-mark">КП</span>
+        <span>Клубная платформа</span>
+      </a>
+      <nav class="topnav" aria-label="Основная навигация">
+        <a class="nav-link" href="/clubs.html">Клубы</a>
+        <a class="nav-link" href="/apply.html">Подключить клуб</a>
+      </nav>
+      <div class="top-actions">
+        <details class="settings">
+          <summary>Вид</summary>
+          <div class="settings-panel">
+            <fieldset class="settings-group">
+              <legend>Тема</legend>
+              <div class="segmented">
+                <label><input type="radio" name="theme" value="system" data-set-theme="system"><span>Система</span></label>
+                <label><input type="radio" name="theme" value="light" data-set-theme="light"><span>Светлая</span></label>
+                <label><input type="radio" name="theme" value="dark" data-set-theme="dark"><span>Тёмная</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="settings-group">
+              <legend>Акцент</legend>
+              <div class="segmented">
+                <label><input type="radio" name="accent" value="green" data-set-accent="green"><span>Зелёный</span></label>
+                <label><input type="radio" name="accent" value="amber" data-set-accent="amber"><span>Янтарь</span></label>
+                <label><input type="radio" name="accent" value="blue" data-set-accent="blue"><span>Синий</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="settings-group">
+              <legend>Фон</legend>
+              <div class="segmented">
+                <label><input type="radio" name="bg" value="photo" data-set-bg="photo"><span>Фото</span></label>
+                <label><input type="radio" name="bg" value="plain" data-set-bg="plain"><span>Без фото</span></label>
+              </div>
+            </fieldset>
+          </div>
+        </details>
+        <a class="button quiet" href="/clubs.html">К клубам</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="container auth-main">
+    <div class="auth-layout">
+      <section class="auth-card">
+        <p class="eyebrow">Вход</p>
+        <h1>С возвращением</h1>
+        <p>Войдите, чтобы видеть свои брони, заявки и настройки.</p>
+        <form id="loginForm" class="auth-form">
+          <label class="field">
+            <span>Логин</span>
+            <input type="text" name="login" placeholder="Имя или email" autocomplete="username" required>
+          </label>
+          <label class="field">
+            <span>Пароль</span>
+            <input type="password" name="password" placeholder="Ваш пароль" autocomplete="current-password" required>
+          </label>
+          <button class="button block" type="submit">Войти</button>
+          <p id="message" class="form-error" role="status"></p>
+          <p class="form-note">Нет аккаунта? <a href="/">Зарегистрироваться</a></p>
+        </form>
+      </section>
+      <aside class="auth-aside">
+        <p class="eyebrow">Один аккаунт</p>
+        <h2>Все клубы в одном месте</h2>
+        <p>Брони, заявки и история сохраняются в личном кабинете. Настройки вида запоминаются в браузере.</p>
+        <ul class="auth-list">
+          <li>Свободные места и бронирование онлайн</li>
+          <li>Статусы заявок на подключение клуба</li>
+          <li>Светлая и тёмная тема без перезагрузки</li>
+        </ul>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>Клубная платформа · Городской сервис</span>
+      <div class="footer-links">
+        <a href="/terms.html">Соглашение</a>
+        <a href="/privacy.html">Конфиденциальность</a>
+      </div>
+    </div>
+  </footer>
+
   <script>
     const params = new URLSearchParams(location.search);
     const club = params.get('club') || '';
@@ -25,7 +105,7 @@
 
     function redirectAfterAuth() {
       if (next.startsWith('/') && !next.startsWith('//')) return next;
-      return '/menu.html' + (club ? '?club=' + encodeURIComponent(club) : '');
+      return club ? '/menu.html?club=' + encodeURIComponent(club) : '/clubs.html';
     }
 
     if (club || next) {
@@ -35,13 +115,16 @@
       document.querySelector('a[href="/"]').href = '/?' + query.toString();
     }
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const form = e.target;
-      const msg = document.getElementById('message');
+    document.getElementById('loginForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const message = document.getElementById('message');
+      const button = form.querySelector('button[type="submit"]');
+      button.disabled = true;
+      message.textContent = '';
 
       try {
-        const res = await fetch('/login', {
+        const response = await fetch('/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -49,15 +132,16 @@
             password: form.password.value
           })
         });
-        const data = await res.json();
-        if (res.ok) {
+        const data = await response.json();
+        if (response.ok) {
           window.location.href = redirectAfterAuth();
-        } else {
-          msg.textContent = data.message;
+          return;
         }
-      } catch (err) {
-        console.error(err);
-        msg.textContent = 'Ошибка: ' + err.message;
+        message.textContent = data.message || 'Не удалось войти';
+      } catch (error) {
+        message.textContent = 'Ошибка: ' + error.message;
+      } finally {
+        button.disabled = false;
       }
     });
   </script>

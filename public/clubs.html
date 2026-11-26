@@ -2,219 +2,142 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Клубы — Клубная платформа</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="extra.css">
-  <link rel="stylesheet" href="plan-themes.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f0">
+  <title>Клубы — Клубная платформа</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css">
 </head>
-<body class="club">
+<body class="city">
+  <a class="skip-link" href="#main">К содержимому</a>
   <header class="topbar">
-    <div class="brand"><span class="logo">◆</span> КЛУБНАЯ ПЛАТФОРМА</div>
-    <nav class="topnav">
-      <button type="button" class="tab-link active">Клубы</button>
-      <a class="tab-link" href="/apply.html">Подключить клуб</a>
-      <a class="tab-link" href="/login.html">Войти</a>
-    </nav>
+    <div class="container topbar-inner">
+      <a class="brand" href="/clubs.html">
+        <span class="brand-mark">КП</span>
+        <span>Клубная платформа</span>
+      </a>
+      <nav class="topnav" aria-label="Основная навигация">
+        <a class="nav-link active" href="/clubs.html">Клубы</a>
+        <a class="nav-link" href="/apply.html">Подключить клуб</a>
+      </nav>
+      <div class="top-actions">
+        <details class="settings">
+          <summary>Вид</summary>
+          <div class="settings-panel">
+            <fieldset class="settings-group">
+              <legend>Тема</legend>
+              <div class="segmented">
+                <label><input type="radio" name="theme" value="system" data-set-theme="system"><span>Система</span></label>
+                <label><input type="radio" name="theme" value="light" data-set-theme="light"><span>Светлая</span></label>
+                <label><input type="radio" name="theme" value="dark" data-set-theme="dark"><span>Тёмная</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="settings-group">
+              <legend>Акцент</legend>
+              <div class="segmented">
+                <label><input type="radio" name="accent" value="green" data-set-accent="green"><span>Зелёный</span></label>
+                <label><input type="radio" name="accent" value="amber" data-set-accent="amber"><span>Янтарь</span></label>
+                <label><input type="radio" name="accent" value="blue" data-set-accent="blue"><span>Синий</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="settings-group">
+              <legend>Фон</legend>
+              <div class="segmented">
+                <label><input type="radio" name="bg" value="photo" data-set-bg="photo"><span>Фото</span></label>
+                <label><input type="radio" name="bg" value="plain" data-set-bg="plain"><span>Без фото</span></label>
+              </div>
+            </fieldset>
+          </div>
+        </details>
+        <a id="authLink" class="button quiet" href="/login.html">Войти</a>
+        <a id="adminLink" class="button ghost hidden" href="/menu.html">Панель</a>
+      </div>
+    </div>
   </header>
-  <div id="unifiedNav" class="unified-nav"></div>
-  <script src="nav.js"></script>
 
-  <main class="container">
-    <div class="page-head">
-      <h1>Клубы</h1>
-      <p class="muted">Выбери клуб — откроется его сайт с меню, ценами и бронированием мест.</p>
-    </div>
-
-    <div class="price-form">
-      <label>Поиск
-        <input id="clubSearch" type="search" placeholder="Название или адрес" autocomplete="off">
-      </label>
-      <button type="button" class="tab-link active" data-plan="all">Все</button>
-      <button type="button" class="tab-link" data-plan="economy">Economy</button>
-      <button type="button" class="tab-link" data-plan="standard">Standard</button>
-      <button type="button" class="tab-link" data-plan="lux">Lux</button>
-    </div>
-
-    <div id="clubsList" class="products"></div>
-    <p id="clubsEmpty" class="empty hidden">Клубы не найдены</p>
-
-    <section class="plan-compare">
-      <h2>Чем отличаются тарифы</h2>
-      <div id="planCards" class="plan-cards"></div>
+  <main id="main" class="container">
+    <section class="hero" aria-labelledby="heroTitle">
+      <img class="hero-photo" src="assets/club-bg.jpg" alt="" decoding="async">
+      <div class="hero-content">
+        <p class="eyebrow">Городской сервис</p>
+        <h1 id="heroTitle">Компьютерный клуб рядом с вами</h1>
+        <p>Спокойное место для игры, работы и встреч. Выберите клуб, посмотрите свободные места и забронируйте время онлайн.</p>
+        <div class="hero-actions">
+          <a class="button" href="#clubs">Найти клуб</a>
+          <a class="button ghost" href="/apply.html">Подключить клуб</a>
+        </div>
+        <div class="hero-facts">
+          <div class="hero-fact"><strong id="clubsFact">—</strong><span>клуба в каталоге</span></div>
+          <div class="hero-fact"><strong>3</strong><span>тарифа на выбор</span></div>
+          <div class="hero-fact"><strong>Онлайн</strong><span>бронирование мест</span></div>
+        </div>
+      </div>
     </section>
 
-    <div class="club-hero">
-      <h2>Хочешь свой сайт клуба?</h2>
-      <p>Отправь заявку — после проверки мы создадим сайт, зал, места и панель администратора.</p>
-      <a href="/apply.html"><button type="button">Подключить клуб</button></a>
-    </div>
+    <section id="clubs" class="section" aria-labelledby="clubsTitle">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Каталог</p>
+          <h2 id="clubsTitle">Выберите клуб</h2>
+          <p>Сравните адреса, режим работы и возможности. Внутри клуба — карта мест, меню и бронирование.</p>
+        </div>
+        <span id="clubsCount" class="muted small"></span>
+      </div>
+
+      <div class="filters">
+        <div class="field search-field">
+          <label for="clubSearch">Поиск</label>
+          <input id="clubSearch" type="search" placeholder="Название или адрес" autocomplete="off">
+        </div>
+        <div class="chips" aria-label="Фильтр по тарифу">
+          <button type="button" class="chip active" data-plan="all">Все</button>
+          <button type="button" class="chip" data-plan="economy">Economy</button>
+          <button type="button" class="chip" data-plan="standard">Standard</button>
+          <button type="button" class="chip" data-plan="lux">Lux</button>
+        </div>
+      </div>
+
+      <div id="clubsList" class="club-grid"></div>
+      <div id="clubsEmpty" class="empty-state hidden">
+        <strong>Клубы не найдены</strong>
+        Попробуйте изменить запрос или выбрать другой тариф.
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="plansTitle">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Тарифы</p>
+          <h2 id="plansTitle">Чем отличаются клубы</h2>
+          <p>Тариф задаёт набор возможностей: от базового бронирования до залов с премиальным оборудованием.</p>
+        </div>
+      </div>
+      <div id="planCards" class="plan-grid"></div>
+    </section>
+
+    <section class="section">
+      <div class="cta">
+        <div>
+          <h2>Хотите свой сайт клуба?</h2>
+          <p>Отправьте заявку. После проверки мы создадим страницу клуба, зал, места и панель администратора.</p>
+        </div>
+        <a class="button" href="/apply.html">Подключить клуб</a>
+      </div>
+    </section>
   </main>
 
-  <script>
-    let clubs = [];
-    let plans = {};
-    let activePlan = 'all';
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>Клубная платформа · Городской сервис</span>
+      <div class="footer-links">
+        <a href="/terms.html">Соглашение</a>
+        <a href="/privacy.html">Конфиденциальность</a>
+        <a href="https://unsplash.com/photos/a-room-with-a-desk-computer-and-two-monitors-RHum9wpeeno" target="_blank" rel="noreferrer">Фото: Ella Don / Unsplash</a>
+      </div>
+    </div>
+  </footer>
 
-    function planTitle(plan) {
-      return (plans[plan] && plans[plan].title) || plan;
-    }
-
-    function renderPlans() {
-      const wrap = document.getElementById('planCards');
-      wrap.textContent = '';
-      Object.keys(plans).forEach((key) => {
-        const plan = plans[key];
-        const card = document.createElement('article');
-        card.className = 'plan-card';
-        card.style.setProperty('--plan-accent', plan.colors.accent);
-        card.style.setProperty('--plan-surface', plan.colors.surface);
-        card.style.setProperty('--plan-ink', plan.colors.ink);
-
-        const head = document.createElement('h3');
-        head.textContent = plan.title + ' · ' + plan.tier;
-        const tagline = document.createElement('p');
-        tagline.className = 'plan-tagline';
-        tagline.textContent = plan.tagline;
-        card.append(head, tagline);
-
-        const pluses = document.createElement('ul');
-        pluses.className = 'plan-features';
-        plan.advantages.forEach((item) => {
-          const li = document.createElement('li');
-          li.textContent = '+ ' + item;
-          pluses.append(li);
-        });
-        card.append(pluses);
-
-        if (plan.restrictions.length) {
-          const minus = document.createElement('p');
-          minus.className = 'plan-limit';
-          minus.textContent = plan.restrictions.join(' · ');
-          card.append(minus);
-        }
-
-        const req = document.createElement('p');
-        req.className = 'muted';
-        req.textContent = 'Нужно: ' + plan.requirements.join(', ');
-        const settings = document.createElement('p');
-        settings.className = 'plan-settings';
-        settings.textContent = 'Настройки: ' + plan.settings.join(', ');
-        card.append(req, settings);
-        wrap.append(card);
-      });
-    }
-
-    function render() {
-      const query = document.getElementById('clubSearch').value.trim().toLowerCase();
-      const list = clubs.filter((club) => {
-        const matchesPlan = activePlan === 'all' || club.plan === activePlan;
-        const text = (club.name + ' ' + (club.address || '')).toLowerCase();
-        return matchesPlan && text.includes(query);
-      });
-
-      const wrap = document.getElementById('clubsList');
-      wrap.textContent = '';
-      document.getElementById('clubsEmpty').classList.toggle('hidden', list.length > 0);
-
-      list.forEach((club) => {
-        const info = club.planInfo || plans[club.plan];
-        const card = document.createElement('article');
-        card.className = 'product';
-        if (info) {
-          card.style.setProperty('--plan-accent', info.colors.accent);
-          card.style.setProperty('--plan-surface', info.colors.surface);
-          card.style.setProperty('--plan-ink', info.colors.ink);
-        }
-
-        const top = document.createElement('div');
-        top.className = 'product-top';
-        const title = document.createElement('h3');
-        title.textContent = club.name;
-        const badge = document.createElement('span');
-        badge.className = 'product-tag';
-        badge.textContent = planTitle(club.plan);
-        top.append(title, badge);
-
-        const address = document.createElement('p');
-        address.className = 'muted';
-        address.textContent = club.address || 'Адрес уточняется';
-
-        const hours = document.createElement('p');
-        hours.className = 'count';
-        hours.textContent = club.hours || 'Режим работы уточняется';
-
-        const phone = document.createElement('p');
-        phone.className = 'muted';
-        phone.textContent = club.phone || '';
-
-        if (info) {
-          const tagline = document.createElement('p');
-          tagline.className = 'plan-tagline';
-          tagline.textContent = info.tagline;
-          const chips = document.createElement('div');
-          chips.className = 'plan-features inline';
-          info.advantages.forEach((item) => {
-            const chip = document.createElement('span');
-            chip.className = 'plan-feature';
-            chip.textContent = item;
-            chips.append(chip);
-          });
-          card.append(tagline, chips);
-        }
-
-        const actions = document.createElement('div');
-        actions.className = 'seat-actions';
-        const site = document.createElement('a');
-        site.href = '/club.html?club=' + encodeURIComponent(club.slug);
-        const siteButton = document.createElement('button');
-        siteButton.type = 'button';
-        siteButton.textContent = 'Сайт клуба';
-        site.append(siteButton);
-
-        const menu = document.createElement('a');
-        menu.href = '/menu.html?club=' + encodeURIComponent(club.slug);
-        const menuButton = document.createElement('button');
-        menuButton.type = 'button';
-        menuButton.className = 'ghost';
-        menuButton.textContent = 'Меню и бронь';
-        menu.append(menuButton);
-
-        actions.append(site, menu);
-        card.append(top, address, hours, phone, actions);
-        wrap.append(card);
-      });
-    }
-
-    document.getElementById('clubSearch').addEventListener('input', render);
-    document.querySelectorAll('[data-plan]').forEach((button) => {
-      button.addEventListener('click', () => {
-        activePlan = button.dataset.plan;
-        document.querySelectorAll('[data-plan]').forEach((item) => {
-          item.classList.toggle('active', item === button);
-        });
-        render();
-      });
-    });
-
-    (async function init() {
-      try {
-        const [clubsRes, plansRes] = await Promise.all([fetch('/api/clubs'), fetch('/api/plans')]);
-        if (!clubsRes.ok) throw new Error('Не удалось загрузить клубы');
-        clubs = await clubsRes.json();
-        plans = await plansRes.json();
-        renderPlans();
-        document.querySelectorAll('[data-plan]').forEach((button) => {
-          const info = plans[button.dataset.plan];
-          if (info) button.title = info.tagline;
-        });
-        render();
-      } catch (error) {
-        const empty = document.getElementById('clubsEmpty');
-        empty.textContent = error.message;
-        empty.classList.remove('hidden');
-      }
-    })();
-  </script>
+  <script src="clubs.js"></script>
 </body>
 </html>

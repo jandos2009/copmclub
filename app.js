@@ -347,6 +347,17 @@ app.get('/api/halls', async (req, res, next) => {
   }
 });
 
+app.get('/api/session', (req, res) => {
+  if (!req.session.userId) return res.json({ authenticated: false });
+  res.json({
+    authenticated: true,
+    userId: req.session.userId,
+    login: req.session.login,
+    role: req.session.role || 'user',
+    clubId: req.session.clubId || null
+  });
+});
+
 app.get('/me', (req, res) => {
   if (!req.session.userId) return fail(res, 401, 'Вы не вошли');
   res.json({
@@ -486,6 +497,23 @@ app.get('/bookings/mine', requireAuth, async (req, res, next) => {
       where: { userId: req.session.userId, clubId: req.club.id, status: 'active', end: { gt: now } },
       orderBy: { start: 'asc' },
       include: { seats: { include: { seat: { select: { id: true, name: true, zone: true } } } } }
+    });
+    res.json(bookings);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/api/me/bookings', requireAuth, async (req, res, next) => {
+  try {
+    const now = new Date();
+    const bookings = await prisma.booking.findMany({
+      where: { userId: req.session.userId, status: 'active', end: { gt: now } },
+      orderBy: { start: 'asc' },
+      include: {
+        club: { select: { name: true, slug: true } },
+        seats: { include: { seat: { select: { id: true, name: true, zone: true } } } }
+      }
     });
     res.json(bookings);
   } catch (error) {

@@ -1,74 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Привет, мир</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="extra.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5f0">
+  <title>Регистрация — Клубная платформа</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css">
 </head>
-<body>
-  <div id="pond">
-    <form id="regForm" class="fish">
-      <h2>Регестрация</h2>
-       <input type="text" name="login" placeholder="Имя или Адрес" required>
-       <input type="password" name="password" placeholder="Пароль"required minlength="8">
-       <label class="agree">
-        <input type="checkbox" name="agree" required>
-        <span>Я согласен с <a href="/terms.html">пользовательским соглашением</a>
-          и <a href="/privacy.html">политикой конфиденциальности</a></span>
-       </label>
-      <button type="submit">Зарегистрироваться</button>
-      <p id="message"></p>
-      <a href="/login.html">Уже есть аккаунт? Войти</a>
-    </form>
-  </div>
+<body class="city auth-page">
+  <a class="skip-link" href="#main">К содержимому</a>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="/clubs.html">
+        <span class="brand-mark">КП</span>
+        <span>Клубная платформа</span>
+      </a>
+      <nav class="topnav" aria-label="Основная навигация">
+        <a class="nav-link" href="/clubs.html">Клубы</a>
+        <a class="nav-link" href="/apply.html">Подключить клуб</a>
+      </nav>
+      <div class="top-actions">
+        <details class="settings">
+          <summary>Вид</summary>
+          <div class="settings-panel">
+            <fieldset class="settings-group">
+              <legend>Тема</legend>
+              <div class="segmented">
+                <label><input type="radio" name="theme" value="system" data-set-theme="system"><span>Система</span></label>
+                <label><input type="radio" name="theme" value="light" data-set-theme="light"><span>Светлая</span></label>
+                <label><input type="radio" name="theme" value="dark" data-set-theme="dark"><span>Тёмная</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="settings-group">
+              <legend>Акцент</legend>
+              <div class="segmented">
+                <label><input type="radio" name="accent" value="green" data-set-accent="green"><span>Зелёный</span></label>
+                <label><input type="radio" name="accent" value="amber" data-set-accent="amber"><span>Янтарь</span></label>
+                <label><input type="radio" name="accent" value="blue" data-set-accent="blue"><span>Синий</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="settings-group">
+              <legend>Фон</legend>
+              <div class="segmented">
+                <label><input type="radio" name="bg" value="photo" data-set-bg="photo"><span>Фото</span></label>
+                <label><input type="radio" name="bg" value="plain" data-set-bg="plain"><span>Без фото</span></label>
+              </div>
+            </fieldset>
+          </div>
+        </details>
+        <a class="button quiet" href="/login.html">Войти</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="container auth-main">
+    <div class="auth-layout">
+      <section class="auth-card">
+        <p class="eyebrow">Регистрация</p>
+        <h1>Создайте аккаунт</h1>
+        <p>Один аккаунт для броней, заявок и личного кабинета.</p>
+        <form id="regForm" class="auth-form">
+          <label class="field">
+            <span>Логин</span>
+            <input type="text" name="login" placeholder="Имя или email" autocomplete="username" required>
+          </label>
+          <label class="field">
+            <span>Пароль</span>
+            <input type="password" name="password" placeholder="Не менее 8 символов" autocomplete="new-password" required minlength="8">
+          </label>
+          <label class="check-line">
+            <input type="checkbox" name="agree" required>
+            <span>Я согласен с <a href="/terms.html">пользовательским соглашением</a> и <a href="/privacy.html">политикой конфиденциальности</a></span>
+          </label>
+          <button class="button block" type="submit">Зарегистрироваться</button>
+          <p id="message" class="form-error" role="status"></p>
+          <p class="form-note">Уже есть аккаунт? <a href="/login.html">Войти</a></p>
+        </form>
+      </section>
+      <aside class="auth-aside">
+        <p class="eyebrow">Городской сервис</p>
+        <h2>Запись в клуб без звонков</h2>
+        <p>Выберите клуб, посмотрите свободные места и забронируйте время. Настройте тему и акцент под себя.</p>
+        <ul class="auth-list">
+          <li>Брони в нескольких клубах</li>
+          <li>Статус заявки на подключение клуба</li>
+          <li>Спокойный интерфейс для любого возраста</li>
+        </ul>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>Клубная платформа · Городской сервис</span>
+      <div class="footer-links">
+        <a href="/terms.html">Соглашение</a>
+        <a href="/privacy.html">Конфиденциальность</a>
+      </div>
+    </div>
+  </footer>
 
   <script>
-  const params = new URLSearchParams(location.search);
-  const club = params.get('club') || '';
-  const next = params.get('next') || '';
+    const params = new URLSearchParams(location.search);
+    const club = params.get('club') || '';
+    const next = params.get('next') || '';
 
-  function redirectAfterAuth() {
-    if (next.startsWith('/') && !next.startsWith('//')) return next;
-    return '/menu.html' + (club ? '?club=' + encodeURIComponent(club) : '');
-  }
-
-  if (club || next) {
-    const query = new URLSearchParams();
-    if (club) query.set('club', club);
-    if (next) query.set('next', next);
-    const loginLink = document.querySelector('a[href="/login.html"]');
-    if (loginLink) loginLink.href = '/login.html?' + query.toString();
-  }
-
-  document.getElementById('regForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const msg = document.getElementById('message');
-
-    try {
-      const res = await fetch('/register', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          login: form.login.value,
-          password: form.password.value,
-          agree: form.agree.checked
-        })
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        window.location.href = redirectAfterAuth();
-      } else {
-        msg.textContent = data.message;
-      }
-    } catch (err) {
-      console.error(err);
-      msg.textContent = 'Ошибка: ' + err.message;
+    function redirectAfterAuth() {
+      if (next.startsWith('/') && !next.startsWith('//')) return next;
+      return club ? '/menu.html?club=' + encodeURIComponent(club) : '/clubs.html';
     }
-  });
-</script>
+
+    if (club || next) {
+      const query = new URLSearchParams();
+      if (club) query.set('club', club);
+      if (next) query.set('next', next);
+      const loginLink = document.querySelector('a[href="/login.html"]');
+      if (loginLink) loginLink.href = '/login.html?' + query.toString();
+    }
+
+    document.getElementById('regForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const message = document.getElementById('message');
+      const button = form.querySelector('button[type="submit"]');
+      button.disabled = true;
+      message.textContent = '';
+
+      try {
+        const response = await fetch('/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            login: form.login.value,
+            password: form.password.value,
+            agree: form.agree.checked
+          })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          window.location.href = redirectAfterAuth();
+          return;
+        }
+        message.textContent = data.message || 'Не удалось зарегистрироваться';
+      } catch (error) {
+        message.textContent = 'Ошибка: ' + error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
